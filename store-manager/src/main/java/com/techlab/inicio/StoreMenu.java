@@ -16,10 +16,13 @@ public class StoreMenu {
 
     //Se usa String y no int, para poder tener clave tanto númerica como String
     private final Map<String, Runnable> actionsMap = new HashMap<>();
-    private final Map<String, Runnable> categoriesMap= new HashMap<>();
+    private final Map<String, Runnable> fabricCategoriesMap = new HashMap<>();
+    private final Map<String, String> categoriesNames= new HashMap<>();
+    //private final String[] categoriesNames = {"bebida", "producto empaquetado", "accesorio", "electronico"};
 
 
     public StoreMenu() {
+        //** actionsMap **
         actionsMap.put("1", this::addProduct);
         actionsMap.put("agregar producto", this::addProduct);
 
@@ -40,11 +43,37 @@ public class StoreMenu {
 
         actionsMap.put("7", () -> {});
         actionsMap.put("salir", () -> {});
+
+        /** categoriesNames
+         * La clave y contenido son idénticos por simplicidad. De esta forma, obtengo
+         * la categoría ya sea que el usuario la seleccione ingresando un número o por
+         * su nombre.
+         */
+        categoriesNames.put("1", "bebida");
+        categoriesNames.put("bebida", "bebida");
+
+        categoriesNames.put("2", "producto empaquetado");
+        categoriesNames.put("producto empaquetado", "producto empaquetado");
+
+        categoriesNames.put("3", "accesorio");
+        categoriesNames.put("accesorio", "accesorio");
+
+        categoriesNames.put("4", "electronico");
+        categoriesNames.put("electronico", "electronico");
+
+        /** fabricCategoriesMap
+         * A partir de categoriesNames obtenemos las claves.
+         */
+        fabricCategoriesMap.put("bebida", this::newDrink);
+        fabricCategoriesMap.put("producto empaquetado", this::newPackagedProduct);
+        fabricCategoriesMap.put("accesorio", this::newAccessory);
+        fabricCategoriesMap.put("electronico", this::newElectronic);
+
     }
 
     public void run(){
         printOptions();
-        String option = scanner.nextLine();
+        String option = scanner.nextLine().trim().toLowerCase();
         Runnable action = actionsMap.get(option);
 
         while (!option.equals("salir") && !option.equals(EXIT_ACTION_NUMBER)){
@@ -55,8 +84,7 @@ public class StoreMenu {
                 printOptions();
             }
 
-
-            option = scanner.nextLine();
+            option = scanner.nextLine().trim().toLowerCase();
             action = actionsMap.get(option);
         }
 
@@ -85,7 +113,16 @@ public class StoreMenu {
         String name = scanName();
         double basePrice = scanBasePrice();
         int stock = scanStock();
-        String category = scanCategory();
+        String categoryName = scanCategoryName(); //también sirve como key para fabricCategoriesMap
+
+        /**
+         *  TODO: Proximo paso: Usar "Factory method", delegamos a una interfaz la creación de Productos
+         *   Habrá que cambiar el mapeo para que use la interfaz
+         */
+    }
+
+    //esto será desechado
+    private void newDrink() {
 
     }
 
@@ -123,19 +160,22 @@ public class StoreMenu {
         return stock;
     }
 
-    private String scanCategory(){
+    private String scanCategoryName(){
         printCategories();
-        System.out.print("Categoria: ");
-        String category = scanner.nextLine(); //todo: controlar correctamente
-        System.out.println();
+        String option = scanner.nextLine().trim().toLowerCase();
+        String categoryName = categoriesNames.get(option);
 
-        return category;
+        while (categoryName == null){
+            System.out.println("Opción inválida, Ingrese nuevamente");
+            option = scanner.nextLine().trim().toLowerCase();
+            categoryName = categoriesNames.get(option);
+        }
+        return categoryName;
     }
 
-    //private final String[] categories = {"Drink","Packaged Product", "Accessory", "Electronic"};
 
     private void printCategories() {
-        System.out.println("""
+        System.out.print("""
                 1) Bebida
                 2) Producto Empaquetado
                 3) Accesorio

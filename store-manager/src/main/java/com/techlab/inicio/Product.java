@@ -5,7 +5,7 @@ abstract class Product {
     private static int counterId = 0;   //static: Pertenece a la clase misma, no a las instancias
 
     private String name ;
-    private String category;
+    private String category; //TODO: Posiblemente hay que eliminarlo ya que la categoria se puede obtener de las propias clases
     private int stock;
     private double basePrice;
     private double taxRate;
