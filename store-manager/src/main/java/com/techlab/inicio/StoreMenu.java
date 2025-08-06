@@ -6,17 +6,13 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class StoreMenu {
-    private static final int MIN_ACTION = 1;
-    private static final int MAX_ACTION = 7;
     private static final String EXIT_ACTION_NUMBER = "7";
-    private static final int MIN_CATEGORY = 1;
-    private static final int MAX_CATEGORY = 4;
     private final Scanner scanner = new Scanner(System.in);
     private final ArrayList<Product> products= new ArrayList<>();
 
     //Se usa String y no int, para poder tener clave tanto númerica como String
     private final Map<String, Runnable> actionsMap = new HashMap<>();
-    private final Map<String, Runnable> fabricCategoriesMap = new HashMap<>();
+    private final Map<String, ProductFactory> categoriesFactoryMap = new HashMap<>();
     private final Map<String, String> categoriesNames= new HashMap<>();
     //private final String[] categoriesNames = {"bebida", "producto empaquetado", "accesorio", "electronico"};
 
@@ -61,13 +57,13 @@ public class StoreMenu {
         categoriesNames.put("4", "electronico");
         categoriesNames.put("electronico", "electronico");
 
-        /** fabricCategoriesMap
+        /** categoriesFactoryMap
          * A partir de categoriesNames obtenemos las claves.
          */
-        fabricCategoriesMap.put("bebida", this::newDrink);
-        fabricCategoriesMap.put("producto empaquetado", this::newPackagedProduct);
-        fabricCategoriesMap.put("accesorio", this::newAccessory);
-        fabricCategoriesMap.put("electronico", this::newElectronic);
+        categoriesFactoryMap.put("bebida", Drink::new);
+        categoriesFactoryMap.put("producto empaquetado", PackagedProduct::new);
+        categoriesFactoryMap.put("accesorio", Accessory::new);
+        categoriesFactoryMap.put("electronico", Electronic::new);
 
     }
 
@@ -113,17 +109,21 @@ public class StoreMenu {
         String name = scanName();
         double basePrice = scanBasePrice();
         int stock = scanStock();
-        String categoryName = scanCategoryName(); //también sirve como key para fabricCategoriesMap
+        String categoryName = scanCategoryName(); //también sirve como key para categoriesFactoryMap
 
         /**
          *  TODO: Proximo paso: Usar "Factory method", delegamos a una interfaz la creación de Productos
          *   Habrá que cambiar el mapeo para que use la interfaz
          */
-    }
+        ProductFactory productFactory = categoriesFactoryMap.get(categoryName);
 
-    //esto será desechado
-    private void newDrink() {
-
+        if (productFactory != null) {
+            Product newProduct = productFactory.create(name, stock, basePrice);
+            products.add(newProduct);
+            System.out.println("Producto agregado exitosamente.");
+        } else {
+            System.out.println("Error al crear producto.");
+        }
     }
 
     private String scanName(){

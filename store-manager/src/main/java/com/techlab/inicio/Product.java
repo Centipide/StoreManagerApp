@@ -5,7 +5,6 @@ abstract class Product {
     private static int counterId = 0;   //static: Pertenece a la clase misma, no a las instancias
 
     private String name ;
-    private String category; //TODO: Posiblemente hay que eliminarlo ya que la categoria se puede obtener de las propias clases
     private int stock;
     private double basePrice;
     private double taxRate;
@@ -16,11 +15,10 @@ abstract class Product {
     }
 
     protected Product(){}
-    protected Product(String name, String category, int stock, double basePrice){
+    protected Product(String name, int stock, double basePrice){
         setName(name);
         setStock(stock);
         setBasePrice(basePrice);
-        setCategory(category);
     }
 
     protected void setName(String name) { //todo: pasar a titleCase "Cafe Chái"
@@ -43,9 +41,6 @@ abstract class Product {
     protected void setTaxRate(double taxRate){ //todo: dudo si ponerlo como private o abstract
         this.taxRate = taxRate;
     }
-    protected void setCategory(String category){
-        this.category = category;
-    }
 
     public String getName() {
         return name;
@@ -61,8 +56,5 @@ abstract class Product {
     }
     public int getId() {
         return id;
-    }
-    public String getCategory() {
-        return category;
     }
 }
