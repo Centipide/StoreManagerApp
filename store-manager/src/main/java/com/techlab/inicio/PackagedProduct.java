@@ -11,4 +11,15 @@ public class PackagedProduct extends Product{
         this.stock = stock;
         this.basePrice = basePrice;
     }
+
+    void print() {
+        System.out.printf("""
+                *******************************************
+                Nombre de Producto: %s
+                Stock disponible: %d
+                Precio base: %.2f
+                Tipo de producto: %s
+                *******************************************
+                """, this.name, this.stock, this.basePrice, this.getClass().getSimpleName());
+    }
 }

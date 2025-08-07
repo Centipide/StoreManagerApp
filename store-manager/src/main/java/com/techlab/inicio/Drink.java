@@ -11,4 +11,16 @@ public class Drink extends Product {
         this.stock = stock;
         this.basePrice = basePrice;
     }
+
+    @Override
+    void print() {
+        System.out.printf("""
+                *******************************************
+                Nombre de Producto: %s
+                Stock disponible: %d
+                Precio base: %.2f
+                Tipo de producto: %s
+                *******************************************
+                """, this.name, this.stock, this.basePrice, this.getClass().getSimpleName());
+    }
 }

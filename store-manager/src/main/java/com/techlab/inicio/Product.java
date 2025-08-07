@@ -57,4 +57,6 @@ abstract class Product {
     public int getId() {
         return id;
     }
+
+    abstract void print();
 }

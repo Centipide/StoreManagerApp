@@ -8,14 +8,12 @@ import java.util.Scanner;
 public class StoreMenu {
     private static final String EXIT_ACTION_NUMBER = "7";
     private final Scanner scanner = new Scanner(System.in);
-    private final ArrayList<Product> products= new ArrayList<>();
+    private final ArrayList<Product> products = new ArrayList<>();
 
     //Se usa String y no int, para poder tener clave tanto númerica como String
     private final Map<String, Runnable> actionsMap = new HashMap<>();
     private final Map<String, ProductFactory> categoriesFactoryMap = new HashMap<>();
-    private final Map<String, String> categoriesNames= new HashMap<>();
-    //private final String[] categoriesNames = {"bebida", "producto empaquetado", "accesorio", "electronico"};
-
+    private final Map<String, String> categoriesNames = new HashMap<>();
 
     public StoreMenu() {
         //** actionsMap **
@@ -77,9 +75,9 @@ public class StoreMenu {
                 action.run();
             else{
                 System.out.println("Opción inválida, Ingrese nuevamente");
-                printOptions();
             }
 
+            printOptions();
             option = scanner.nextLine().trim().toLowerCase();
             action = actionsMap.get(option);
         }
@@ -96,25 +94,20 @@ public class StoreMenu {
                 5) Crear un pedido
                 6) Listar pedidos
                 7) Salir
-                
-                Elija una opción: 
                 """);
+
+        System.out.print("\nElija una opción: ");
     }
 
     /**
      * Lee los datos y crea un nuevo Producto.
      */
-    public void addProduct(){
+    private void addProduct(){
         System.out.println("Ingrese el nuevo Producto: ");
         String name = scanName();
         double basePrice = scanBasePrice();
         int stock = scanStock();
         String categoryName = scanCategoryName(); //también sirve como key para categoriesFactoryMap
-
-        /**
-         *  TODO: Proximo paso: Usar "Factory method", delegamos a una interfaz la creación de Productos
-         *   Habrá que cambiar el mapeo para que use la interfaz
-         */
         ProductFactory productFactory = categoriesFactoryMap.get(categoryName);
 
         if (productFactory != null) {
@@ -129,7 +122,6 @@ public class StoreMenu {
     private String scanName(){
         System.out.print("Nombre: ");
         String name = scanner.nextLine(); //todo: controlar correctamente
-        System.out.println();
 
         return name;
     }
@@ -140,6 +132,7 @@ public class StoreMenu {
         scanner.nextLine();
         while (basePrice < 0){
             System.out.println("Ingrese un precio base válido");
+            System.out.print("Precio base: ");
             basePrice = scanner.nextDouble();
             scanner.nextLine();
         }
@@ -148,11 +141,12 @@ public class StoreMenu {
     }
 
     private int scanStock(){
-        System.out.println("Ingrese cantidad de stock: ");
+        System.out.print("Ingrese cantidad de stock: ");
         int stock = scanner.nextInt();
         scanner.nextLine();
         while (stock < 0){
             System.out.println("Ingrese una cantidad de stock válida");
+            System.out.print("Ingrese cantidad de stock: ");
             stock = scanner.nextInt();
             scanner.nextLine();
         }
@@ -167,6 +161,7 @@ public class StoreMenu {
 
         while (categoryName == null){
             System.out.println("Opción inválida, Ingrese nuevamente");
+            printCategories();
             option = scanner.nextLine().trim().toLowerCase();
             categoryName = categoriesNames.get(option);
         }
@@ -181,8 +176,15 @@ public class StoreMenu {
                 3) Accesorio
                 4) Electrónico
                 
-                Elija una opción:
                 """);
+        System.out.print("\nElija una opción: ");
+    }
+
+    //2)
+    private void listProducts() {
+        for (Product product: products){
+            product.print();
+        }
     }
 
     private void listOrder() {
@@ -195,8 +197,5 @@ public class StoreMenu {
     }
 
     private void searchUpdateProducts() {
-    }
-
-    private void listProducts() {
     }
 }
