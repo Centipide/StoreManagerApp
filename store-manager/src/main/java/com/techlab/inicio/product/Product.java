@@ -1,5 +1,7 @@
 package com.techlab.inicio.product;
 
+import com.techlab.inicio.utils.StringUtils;
+
 abstract public class Product {
     private final int id;                //final: Una vez asignado no se puede cambiar
     private static int counterId = 0;   //static: Pertenece a la clase misma, no a las instancias
@@ -21,8 +23,8 @@ abstract public class Product {
         setBasePrice(basePrice);
     }
 
-    protected void setName(String name) { //todo: pasar a titleCase "Cafe Chái"
-        this.name = name;
+    protected void setName(String name) {
+        this.name = StringUtils.titleCase(name);
     }
     protected void setStock(int stock) {
         if (stock < 0){

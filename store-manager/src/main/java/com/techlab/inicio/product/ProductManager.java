@@ -1,6 +1,9 @@
 package com.techlab.inicio.product;
 
+import com.techlab.inicio.utils.StringUtils;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -10,6 +13,8 @@ public class ProductManager {
 
     private final Map<String, ProductFactory> categoriesFactoryMap;
     private final Map<String, String> categoriesNames;
+    private final Map<String, Product> productsNameMap = new HashMap<>();
+    private final Map<Integer, Product> productsIdMap = new HashMap<>();
 
     public ProductManager(Map<String, ProductFactory> categoriesFactoryMap, Map<String, String> categoriesNames) {
         this.categoriesFactoryMap = categoriesFactoryMap;
@@ -28,15 +33,27 @@ public class ProductManager {
         if (productFactory != null) {
             Product newProduct = productFactory.create(name, stock, basePrice);
             products.add(newProduct);
+            addProductMap(newProduct);
             System.out.println("Producto agregado exitosamente.");
         } else {
             System.out.println("Error al crear producto.");
         }
     }
 
+    private void addProductMap(Product product){
+        productsNameMap.put(product.getName(), product);
+        productsIdMap.put(product.getId(), product);
+    }
+
     private String scanName(){
         System.out.print("Nombre: ");
-        String name = scanner.nextLine(); //todo: controlar correctamente
+        String name = scanner.nextLine().trim();
+
+        while (name.isEmpty()){
+            System.out.println("Error, ingrese nuevamente");
+            System.out.print("Nombre: ");
+            name = scanner.nextLine().trim();
+        }
 
         return name;
     }
@@ -89,7 +106,6 @@ public class ProductManager {
                 2) Producto Empaquetado
                 3) Accesorio
                 4) Electrónico
-                
                 """);
         System.out.print("\nElija una opción: ");
     }
@@ -103,10 +119,74 @@ public class ProductManager {
     }
 
     //3)
-
+    /**
+     * El sistema permitirá buscar un producto por su nombre o ID.Si se encuentra el producto,
+     * se mostrará su información completa.
+     * Opcionalmente, se podrá actualizar alguno de sus datos (precio o stock),
+     * validando que los valores sean coherentes (por ejemplo, que el stock no sea negativo).
+     */
     public void searchUpdateProduct() {
+        Product searchedProduct = searchProduct();
+        if (searchedProduct == null) //si es null, se ha ingresado salir
+            return;
 
+        searchedProduct.print();
     }
+
+    private Product searchProduct(){
+        String key = scanProductKey();
+        if (key.equalsIgnoreCase("salir"))
+            return null;
+        Product searchedProduct = obtainProduct(key);
+
+        while (searchedProduct == null){
+            System.out.println("Producto no encontrado");
+            key = scanProductKey();
+            if (key.equalsIgnoreCase("salir"))
+                return null;
+            searchedProduct = obtainProduct(key);
+        }
+
+        return searchedProduct;
+    }
+
+    // todo: revisar. la funcion busca por nombre primero, y sino por ID
+    private Product obtainProduct(String key) {
+        if (key == null || key.isEmpty()){
+            System.out.println("Error: No se encontró key");
+            return null;
+        }
+
+        Product product = productsNameMap.get(key);
+        if (product != null)
+            return product;
+
+        try {
+            int id = Integer.parseInt(key);
+            product = productsIdMap.get(id);
+        } catch (NumberFormatException e) {
+        }
+
+        return product;
+    }
+
+    private String scanProductKey(){
+        System.out.print("Ingrese el Nombre o ID del producto (o salir para volver atrás): ");
+        String key = scanner.nextLine().trim();
+
+        while (key.isEmpty()){
+            System.out.println("Error, ingrese nuevamente");
+            System.out.print("Nombre o ID: ");
+            key = scanner.nextLine().trim();
+        }
+
+        return normalizeKey(key);
+    }
+
+    private String normalizeKey(String key){
+        return StringUtils.titleCase(key);
+    }
+
 
     //4)
     public void deleteProduct(){

@@ -64,8 +64,8 @@ public class StoreMenu {
         actionsMap.put("2", this::listProducts);
         actionsMap.put("listar productos", this::listProducts);
 
-        actionsMap.put("3", this::searchUpdateProducts);
-        actionsMap.put("actualizar producto", this::searchUpdateProducts); //buscar/actualizar
+        actionsMap.put("3", this::searchUpdateProduct);
+        actionsMap.put("actualizar producto", this::searchUpdateProduct);
 
         actionsMap.put("4", this::deleteProduct);
         actionsMap.put("eliminar producto", this::deleteProduct);
@@ -85,7 +85,7 @@ public class StoreMenu {
         String option = scanner.nextLine().trim().toLowerCase();
         Runnable action = actionsMap.get(option);
 
-        while (!option.equals("salir") && !option.equals(EXIT_ACTION_NUMBER)){
+        while (!option.equalsIgnoreCase("salir") && !option.equals(EXIT_ACTION_NUMBER)){
             if (action != null)
                 action.run();
             else{
