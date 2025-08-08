@@ -1,5 +1,6 @@
 package com.techlab.inicio.product;
 
+import com.techlab.inicio.utils.ConsoleUtils;
 import com.techlab.inicio.utils.StringUtils;
 
 import java.util.ArrayList;
@@ -24,9 +25,9 @@ public class ProductManager {
     //1)
     public void addProduct(){
         System.out.println("Ingrese el nuevo Producto: ");
-        String name = scanName();
-        double basePrice = scanBasePrice();
-        int stock = scanStock();
+        String name = ConsoleUtils.scanName(scanner);
+        double basePrice = ConsoleUtils.scanBasePrice(scanner);
+        int stock = ConsoleUtils.scanStock(scanner);
         String categoryName = scanCategoryName(); //también sirve como key para categoriesFactoryMap
         ProductFactory productFactory = categoriesFactoryMap.get(categoryName);
 
@@ -45,45 +46,15 @@ public class ProductManager {
         productsIdMap.put(product.getId(), product);
     }
 
-    private String scanName(){
-        System.out.print("Nombre: ");
-        String name = scanner.nextLine().trim();
 
-        while (name.isEmpty()){
-            System.out.println("Error, ingrese nuevamente");
-            System.out.print("Nombre: ");
-            name = scanner.nextLine().trim();
-        }
-
-        return name;
-    }
-
-    private double scanBasePrice(){
-        System.out.print("Precio base: ");
-        double basePrice = scanner.nextDouble();
-        scanner.nextLine();
-        while (basePrice < 0){
-            System.out.println("Ingrese un precio base válido");
-            System.out.print("Precio base: ");
-            basePrice = scanner.nextDouble();
-            scanner.nextLine();
-        }
-
-        return basePrice;
-    }
-
-    private int scanStock(){
-        System.out.print("Ingrese cantidad de stock: ");
-        int stock = scanner.nextInt();
-        scanner.nextLine();
-        while (stock < 0){
-            System.out.println("Ingrese una cantidad de stock válida");
-            System.out.print("Ingrese cantidad de stock: ");
-            stock = scanner.nextInt();
-            scanner.nextLine();
-        }
-
-        return stock;
+    private void printCategories() {
+        System.out.print("""
+                1) Bebida
+                2) Producto Empaquetado
+                3) Accesorio
+                4) Electrónico
+                """);
+        System.out.print("\nElija una opción: ");
     }
 
     private String scanCategoryName(){
@@ -98,16 +69,6 @@ public class ProductManager {
             categoryName = categoriesNames.get(option);
         }
         return categoryName;
-    }
-
-    private void printCategories() {
-        System.out.print("""
-                1) Bebida
-                2) Producto Empaquetado
-                3) Accesorio
-                4) Electrónico
-                """);
-        System.out.print("\nElija una opción: ");
     }
 
 
@@ -132,7 +93,6 @@ public class ProductManager {
 
         searchedProduct.print();
         updateProduct(searchedProduct);
-
     }
 
     /* TODO: en Producto, agregar una funcion que sea PrintFields. Cada categoria de producto debe mostrar sus
@@ -146,25 +106,29 @@ public class ProductManager {
 
             todo: cada funcion tiene que pedir un valor y actualizarlo, verificando que sea válido.
      */
-    private void updateProduct(Product searchedProduct){
-        if (!confirm("Desea actualizar algun campo?"))
+    private void updateProduct(Product product){
+        if (!ConsoleUtils.confirm(scanner,"Desea actualizar algun campo?"))
             return;
 
-        searchedProduct.printFields();
-        selectedField = selectField(searchedProduct);
-
+        product.printFullFields();
+        String selectedField = selectField(product);
+        product.updateField(scanner, selectedField);
     }
 
-    private boolean confirm(String msg){
-        System.out.println(msg + "(S/N): ");
-        String input = scanner.nextLine().trim().toLowerCase();
+    private String selectField(Product product){
+        product.printFullFields();
+        System.out.print("Ingrese el campo a seleccionar: ");
+        String input = scanner.nextLine();
+        String selectedField = product.getField(input);
 
-        while (!input.equals("s") && !input.equals("n")) {
-            System.out.print("Por favor, ingrese 's' o 'n': ");
-            input = scanner.nextLine().trim().toLowerCase();
+        while (selectedField == null){
+            System.out.println("Error, Campo inexistente");
+            System.out.print("Ingrese el campo a seleccionar: ");
+            input = scanner.nextLine();
+            selectedField = product.getField(input);
         }
 
-        return input.equals("s");
+        return selectedField;
     }
 
     private Product searchProduct(){

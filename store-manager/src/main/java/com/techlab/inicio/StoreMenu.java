@@ -15,7 +15,7 @@ public class StoreMenu {
     //Se usa String y no int, para poder tener clave tanto númerica como String
     private final Map<String, Runnable> actionsMap = new HashMap<>();
     private final Map<String, ProductFactory> categoriesFactoryMap = new HashMap<>();
-    private final Map<String, String> categoriesNames = new HashMap<>();
+    private final Map<String, String> categoriesNamesMap = new HashMap<>();
 
 
 
@@ -24,11 +24,11 @@ public class StoreMenu {
         createCategoriesNames();
         createCategoriesFactoryMap();
 
-        productManager = new ProductManager(categoriesFactoryMap, categoriesNames);
+        productManager = new ProductManager(categoriesFactoryMap, categoriesNamesMap);
     }
 
     /** categoriesFactoryMap
-     * A partir de categoriesNames obtenemos las claves.
+     * A partir de categoriesNamesMap obtenemos las claves.
      */
     private void createCategoriesFactoryMap(){
         categoriesFactoryMap.put("bebida", Drink::new);
@@ -37,23 +37,23 @@ public class StoreMenu {
         categoriesFactoryMap.put("electronico", Electronic::new);
     }
 
-    /** categoriesNames
+    /** categoriesNamesMap
      * La clave y contenido son idénticos por simplicidad. De esta forma, obtengo
      * la categoría ya sea que el usuario la seleccione ingresando un número o por
      * su nombre.
      */
     private void createCategoriesNames(){
-        categoriesNames.put("1", "bebida");
-        categoriesNames.put("bebida", "bebida");
+        categoriesNamesMap.put("1", "bebida");
+        categoriesNamesMap.put("bebida", "bebida");
 
-        categoriesNames.put("2", "producto empaquetado");
-        categoriesNames.put("producto empaquetado", "producto empaquetado");
+        categoriesNamesMap.put("2", "producto empaquetado");
+        categoriesNamesMap.put("producto empaquetado", "producto empaquetado");
 
-        categoriesNames.put("3", "accesorio");
-        categoriesNames.put("accesorio", "accesorio");
+        categoriesNamesMap.put("3", "accesorio");
+        categoriesNamesMap.put("accesorio", "accesorio");
 
-        categoriesNames.put("4", "electronico");
-        categoriesNames.put("electronico", "electronico");
+        categoriesNamesMap.put("4", "electronico");
+        categoriesNamesMap.put("electronico", "electronico");
     }
 
     private void createActionsMap() {
