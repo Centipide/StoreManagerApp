@@ -16,7 +16,7 @@ public class StringUtils {
             }
         }
 
-        if (normalized.length() > 0) {
+        if (!normalized.isEmpty()) {
             normalized.deleteCharAt(normalized.length() - 1);
         }
 

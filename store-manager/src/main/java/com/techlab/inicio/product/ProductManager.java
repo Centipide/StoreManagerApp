@@ -41,7 +41,7 @@ public class ProductManager {
     }
 
     private void addProductMap(Product product){
-        productsNameMap.put(product.getName(), product);
+        productsNameMap.put(normalizeKey(product.getName()), product);
         productsIdMap.put(product.getId(), product);
     }
 
@@ -131,6 +131,40 @@ public class ProductManager {
             return;
 
         searchedProduct.print();
+        updateProduct(searchedProduct);
+
+    }
+
+    /* TODO: en Producto, agregar una funcion que sea PrintFields. Cada categoria de producto debe mostrar sus
+          campos enumerados, de forma que el usuario pueda ingresar un numero o String(nombre del campo).
+
+          todo: cada categoría debería tener un hashmap que permita idenitficar con numero y string el campo
+            Selectedfield deberia tener lo ingresado por el usuario. A partir de ello se accede al hashmap
+            de la categoria respondiente. El hashmap deberia iniciar una funcion como "updatePrice" o diferente
+            dependiendo de selectedField. Estas funciones estan en cada categoria particular (con excepcion de
+            updatePrice, updateName, updateStock que son comunes a todos, deberian estar en Product)
+
+            todo: cada funcion tiene que pedir un valor y actualizarlo, verificando que sea válido.
+     */
+    private void updateProduct(Product searchedProduct){
+        if (!confirm("Desea actualizar algun campo?"))
+            return;
+
+        searchedProduct.printFields();
+        selectedField = selectField(searchedProduct);
+
+    }
+
+    private boolean confirm(String msg){
+        System.out.println(msg + "(S/N): ");
+        String input = scanner.nextLine().trim().toLowerCase();
+
+        while (!input.equals("s") && !input.equals("n")) {
+            System.out.print("Por favor, ingrese 's' o 'n': ");
+            input = scanner.nextLine().trim().toLowerCase();
+        }
+
+        return input.equals("s");
     }
 
     private Product searchProduct(){
@@ -150,7 +184,7 @@ public class ProductManager {
         return searchedProduct;
     }
 
-    // todo: revisar. la funcion busca por nombre primero, y sino por ID
+    // todo: revisar trycatch. la funcion busca por nombre primero, y sino por ID
     private Product obtainProduct(String key) {
         if (key == null || key.isEmpty()){
             System.out.println("Error: No se encontró key");
@@ -184,7 +218,7 @@ public class ProductManager {
     }
 
     private String normalizeKey(String key){
-        return StringUtils.titleCase(key);
+        return key.toLowerCase().trim();
     }
 
 
