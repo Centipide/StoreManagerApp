@@ -1,5 +1,6 @@
 package com.techlab.inicio.product;
 
+import com.techlab.inicio.utils.ConsoleUtils;
 import com.techlab.inicio.utils.StringUtils;
 
 import java.util.HashMap;
@@ -30,11 +31,35 @@ abstract public class Product {
     }
 
     abstract public void print();
-    abstract protected void updateField(String key, Scanner scanner);
-    abstract protected void updateName();
-    abstract protected void updateBasePrice();
-    abstract protected void updateStock();
     abstract protected String getField(String key);
+    abstract protected void updateField(ProductManager manager, Scanner scanner,String key);
+
+    protected void updateName(ProductManager manager, Scanner scanner) {
+        System.out.println("Ingrese un nuevo nombre: ");
+        String newName = ConsoleUtils.scanName(scanner);
+        String oldName = getName();
+
+        ConsoleUtils.showUpdate(FIELD_NAME, oldName, newName);
+        setName(newName);
+        manager.updateProductsNameMap(StringUtils.normalizeKey(oldName), StringUtils.normalizeKey(newName));
+    }
+
+    protected void updateBasePrice(Scanner scanner) {
+        System.out.println("Ingrese un nuevo precio base: ");
+        double newPrice = ConsoleUtils.scanBasePrice(scanner);
+
+        ConsoleUtils.showUpdate(FIELD_BASE_PRICE, String.valueOf(getBasePrice()), String.valueOf(newPrice));
+        setBasePrice(newPrice);
+    }
+
+    protected void updateStock(Scanner scanner) {
+        System.out.println("Ingrese una nueva cantidad de stock: ");
+        int newStock = ConsoleUtils.scanStock(scanner);
+
+        ConsoleUtils.showUpdate(FIELD_STOCK, String.valueOf(getStock()), String.valueOf(newStock));
+        setStock(newStock);
+    }
+
 
     protected void setName(String name) {
         this.name = StringUtils.titleCase(name);
@@ -69,15 +94,6 @@ abstract public class Product {
         fieldsMap.put(FIELD_STOCK, FIELD_STOCK);
 
         return fieldsMap;
-    }
-
-    protected Map<String, Runnable> createBaseUpdateMap(){
-        Map<String, Runnable> updateMap = new HashMap<>();
-        updateMap.put(FIELD_NAME, this::updateName);
-        updateMap.put(FIELD_BASE_PRICE, this::updateBasePrice);
-        updateMap.put(FIELD_STOCK, this::updateStock);
-
-        return updateMap;
     }
 
     public void printBasicFields() {

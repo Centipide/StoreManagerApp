@@ -1,6 +1,7 @@
 package com.techlab.inicio.product;
 
 import com.techlab.inicio.utils.ConsoleUtils;
+import com.techlab.inicio.utils.StringUtils;
 
 import java.io.Console;
 import java.util.Map;
@@ -8,21 +9,14 @@ import java.util.Scanner;
 
 public class Accessory extends Product {
     private static Map<String,String> fieldsMap;
-    private static Map<String,Runnable> updateMap;
 
     public Accessory(String name, int stock, double basePrice){
         super(name,stock,basePrice);
         createFieldsMap();
-        createUpdateMap();
     }
 
     private void createFieldsMap(){
         fieldsMap = createBaseFieldsMap();
-        //todo: por agregar...
-    }
-
-    private void createUpdateMap(){
-        updateMap = createBaseUpdateMap();
         //todo: por agregar...
     }
 
@@ -40,25 +34,20 @@ public class Accessory extends Product {
     }
 
     @Override
-    protected void updateField(Scanner scanner,String key) {
-        updateMap.get(key);
+    protected void updateField(ProductManager manager,Scanner scanner,String key) {
+        switch (StringUtils.normalizeKey(key)){
+            case FIELD_NAME:
+                updateName(manager, scanner);
+                break;
+            case FIELD_BASE_PRICE:
+                updateBasePrice(scanner);
+                break;
+            case FIELD_STOCK:
+                updateStock(scanner);
+                break;
+        }
     }
 
-    @Override
-    protected void updateName(Scanner scanner) {
-        System.out.println("Ingrese un nuevo nombre: ");
-        String newName = ConsoleUtils.scanName(scanner);
-    }
-
-    @Override
-    protected void updateBasePrice(Scanner scanner) {
-        System.out.println("Ingrese un nuevo precio base: ");
-    }
-
-    @Override
-    protected void updateStock(Scanner scanner) {
-        System.out.println("Ingrese una nueva cantidad de stock: ");
-    }
 
     @Override
     protected String getField(String key) {

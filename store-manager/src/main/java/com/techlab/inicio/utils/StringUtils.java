@@ -22,4 +22,8 @@ public class StringUtils {
 
         return normalized.toString();
     }
+
+    public static  String normalizeKey(String key){
+        return key.toLowerCase().trim();
+    }
 }

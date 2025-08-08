@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class ConsoleUtils {
     public static boolean confirm(Scanner scanner, String msg){
-        System.out.println(msg + "(S/N): ");
+        System.out.print(msg + "(S/N): ");
         String input = scanner.nextLine().trim().toLowerCase();
 
         while (!input.equals("s") && !input.equals("n")) {
@@ -56,5 +56,12 @@ public class ConsoleUtils {
         }
 
         return stock;
+    }
+
+    public static void showUpdate(String field, String oldField, String newField){
+        System.out.printf("%s: %s Cambiado a %s\n",
+                StringUtils.titleCase(field),
+                StringUtils.titleCase(oldField),
+                StringUtils.titleCase(newField));
     }
 }

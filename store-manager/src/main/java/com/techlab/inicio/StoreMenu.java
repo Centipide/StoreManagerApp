@@ -103,7 +103,7 @@ public class StoreMenu {
         System.out.print("""
                 1) Agregar producto
                 2) Listar productos
-                3) Actualizar producto
+                3) Buscar/Actualizar producto
                 4) Eliminar producto
                 5) Crear un pedido
                 6) Listar pedidos
@@ -122,17 +122,17 @@ public class StoreMenu {
         productManager.listProducts();
     }
 
-    private void listOrder() {
-    }
-
-    private void createOrderLine() {
+    private void searchUpdateProduct() {
+        productManager.searchUpdateProduct();
     }
 
     private void deleteProduct() {
         productManager.deleteProduct();
     }
 
-    private void searchUpdateProduct() {
-        productManager.searchUpdateProduct();
+    private void listOrder() {
+    }
+
+    private void createOrderLine() {
     }
 }

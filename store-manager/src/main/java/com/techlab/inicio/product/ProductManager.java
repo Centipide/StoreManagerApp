@@ -42,8 +42,24 @@ public class ProductManager {
     }
 
     private void addProductMap(Product product){
-        productsNameMap.put(normalizeKey(product.getName()), product);
+        productsNameMap.put(StringUtils.normalizeKey((product.getName())), product);
         productsIdMap.put(product.getId(), product);
+    }
+
+    public void updateProductsNameMap(String oldKey, String newKey){
+        Product product = productsNameMap.get(oldKey);
+        if (product == null){
+            System.out.println("ERROR al buscar producto con oldKey");
+            return;
+        }
+        productsNameMap.remove(oldKey);
+        productsNameMap.put(StringUtils.normalizeKey(newKey), product);
+    }
+
+    private void removeProduct(String key){
+        Product product = productsNameMap.get(key);
+        productsNameMap.remove(key);
+        products.remove(product);
     }
 
 
@@ -95,24 +111,12 @@ public class ProductManager {
         updateProduct(searchedProduct);
     }
 
-    /* TODO: en Producto, agregar una funcion que sea PrintFields. Cada categoria de producto debe mostrar sus
-          campos enumerados, de forma que el usuario pueda ingresar un numero o String(nombre del campo).
-
-          todo: cada categoría debería tener un hashmap que permita idenitficar con numero y string el campo
-            Selectedfield deberia tener lo ingresado por el usuario. A partir de ello se accede al hashmap
-            de la categoria respondiente. El hashmap deberia iniciar una funcion como "updatePrice" o diferente
-            dependiendo de selectedField. Estas funciones estan en cada categoria particular (con excepcion de
-            updatePrice, updateName, updateStock que son comunes a todos, deberian estar en Product)
-
-            todo: cada funcion tiene que pedir un valor y actualizarlo, verificando que sea válido.
-     */
     private void updateProduct(Product product){
         if (!ConsoleUtils.confirm(scanner,"Desea actualizar algun campo?"))
             return;
 
-        product.printFullFields();
         String selectedField = selectField(product);
-        product.updateField(scanner, selectedField);
+        product.updateField(this, scanner, selectedField);
     }
 
     private String selectField(Product product){
@@ -178,16 +182,21 @@ public class ProductManager {
             key = scanner.nextLine().trim();
         }
 
-        return normalizeKey(key);
-    }
-
-    private String normalizeKey(String key){
-        return key.toLowerCase().trim();
+        return StringUtils.normalizeKey(key);
     }
 
 
     //4)
     public void deleteProduct(){
+        String key = scanProductKey();
 
+        if (obtainProduct(key) != null)
+            removeProduct(key);
+        else{
+            System.out.println("Producto no encontrado");
+            return;
+        }
+
+        System.out.println("Producto " + key + " borrado exitosamente");
     }
 }
