@@ -1,4 +1,4 @@
-package com.techlab.inicio;
+package com.techlab.inicio.product;
 
 public class Drink extends Product {
     private String name;
@@ -13,7 +13,7 @@ public class Drink extends Product {
     }
 
     @Override
-    void print() {
+    public void print() {
         System.out.printf("""
                 *******************************************
                 Nombre de Producto: %s

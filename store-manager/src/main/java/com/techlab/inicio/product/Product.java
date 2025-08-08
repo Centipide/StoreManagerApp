@@ -1,6 +1,6 @@
-package com.techlab.inicio;
+package com.techlab.inicio.product;
 
-abstract class Product {
+abstract public class Product {
     private final int id;                //final: Una vez asignado no se puede cambiar
     private static int counterId = 0;   //static: Pertenece a la clase misma, no a las instancias
 
@@ -58,5 +58,5 @@ abstract class Product {
         return id;
     }
 
-    abstract void print();
+    abstract public void print();
 }
