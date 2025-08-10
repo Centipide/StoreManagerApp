@@ -69,8 +69,8 @@ public class StoreMenu {
         actionsMap.put("4", this::deleteProduct);
         actionsMap.put("eliminar producto", this::deleteProduct);
 
-        actionsMap.put("5", this::createOrderLine);
-        actionsMap.put("crear un pedido", this::createOrderLine);
+        actionsMap.put("5", this::createOrder);
+        actionsMap.put("crear un pedido", this::createOrder);
 
         actionsMap.put("6", this::listOrder);
         actionsMap.put("listar pedidos", this::listOrder);
@@ -130,9 +130,14 @@ public class StoreMenu {
         productManager.deleteProduct();
     }
 
-    private void listOrder() {
+    //todo: createOrder debe encargarse de pedirle a prodcutManager el vector products, para saber que guardar dentro
+    // deberia guardar el objeto Product de cada producto pedido, junto a su cantidad.
+
+    private void createOrder() {
+        orderManager.createOrder();
     }
 
-    private void createOrderLine() {
+    private void listOrder() {
+        orderManager.listOrder();
     }
 }
