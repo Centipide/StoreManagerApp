@@ -21,15 +21,16 @@ public class PackagedProduct extends Product {
     @Override
     public void print() {
         System.out.printf("""
-                *******************************************
+                ********************************************
                 ID: %d
                 Nombre de Producto: %s
                 Stock disponible: %d
                 Precio base: %.2f
                 Tipo de producto: %s
-                *******************************************
+                ********************************************
                 """, getId() ,getName(), getStock(), this.getBasePrice(), this.getClass().getSimpleName());
     }
+
 
 
     @Override
@@ -58,5 +59,10 @@ public class PackagedProduct extends Product {
         printBasicFields();
         //todo: por agregar...
         System.out.println(".");
+    }
+
+    @Override
+    public double getFinalPrice() {
+        return 0;
     }
 }

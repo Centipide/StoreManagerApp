@@ -72,6 +72,46 @@ public class ProductManager {
         }
     }
 
+    //2)
+    public void listProducts() {
+        if (products.isEmpty()){
+            System.out.println("Todavia no se han creado Productos");
+            return;
+        }
+        for (Product product: products)
+            product.print();
+    }
+
+    //3)
+    /**
+     * El sistema permitirá buscar un producto por su nombre o ID.Si se encuentra el producto,
+     * se mostrará su información completa.
+     * Opcionalmente, se podrá actualizar alguno de sus datos (precio o stock),
+     * validando que los valores sean coherentes (por ejemplo, que el stock no sea negativo).
+     */
+    public void searchUpdateProduct() {
+        Product searchedProduct = searchProduct();
+        if (searchedProduct == null) //si es null, se ha ingresado salir
+            return;
+
+        searchedProduct.print();
+        updateProduct(searchedProduct);
+    }
+
+    //4)
+    public void deleteProduct(){
+        String key = scanProductKey();
+
+        if (obtainProduct(key) != null)
+            removeProduct(key);
+        else{
+            System.out.println("Producto no encontrado");
+            return;
+        }
+
+        System.out.println("Producto " + key + " borrado exitosamente");
+    }
+
     private void addProductMap(Product product){
         productsNameMap.put(StringUtils.normalizeKey((product.getName())), product);
         productsIdMap.put(product.getId(), product);
@@ -118,30 +158,6 @@ public class ProductManager {
         return categoryName;
     }
 
-
-    //2)
-    public void listProducts() {
-        for (Product product: products){
-            product.print();
-        }
-    }
-
-    //3)
-    /**
-     * El sistema permitirá buscar un producto por su nombre o ID.Si se encuentra el producto,
-     * se mostrará su información completa.
-     * Opcionalmente, se podrá actualizar alguno de sus datos (precio o stock),
-     * validando que los valores sean coherentes (por ejemplo, que el stock no sea negativo).
-     */
-    public void searchUpdateProduct() {
-        Product searchedProduct = searchProduct();
-        if (searchedProduct == null) //si es null, se ha ingresado salir
-            return;
-
-        searchedProduct.print();
-        updateProduct(searchedProduct);
-    }
-
     private void updateProduct(Product product){
         if (!ConsoleUtils.confirm(scanner,"Desea actualizar algun campo?"))
             return;
@@ -166,7 +182,7 @@ public class ProductManager {
         return selectedField;
     }
 
-    private Product searchProduct(){
+    public Product searchProduct(){
         String key = scanProductKey();
         if (key.equalsIgnoreCase("salir"))
             return null;
@@ -189,22 +205,32 @@ public class ProductManager {
             System.out.println("Error: No se encontró key");
             return null;
         }
+        Product product = null;
 
-        Product product = productsNameMap.get(key);
+        product = findByName(key);
         if (product != null)
             return product;
 
+        product = findById(key);
+        return product;
+    }
+
+    private Product findById(String key){
+        Product product = null;
         try {
             int id = Integer.parseInt(key);
             product = productsIdMap.get(id);
         } catch (NumberFormatException e) {
         }
-
         return product;
     }
 
+    private Product findByName(String key){
+        return productsNameMap.get(key);
+    }
+
     private String scanProductKey(){
-        System.out.print("Ingrese el Nombre o ID del producto (o salir para volver atrás): ");
+        System.out.print("Ingrese el Nombre o ID del producto (o salir para cancelar): ");
         String key = scanner.nextLine().trim();
 
         while (key.isEmpty()){
@@ -217,17 +243,15 @@ public class ProductManager {
     }
 
 
-    //4)
-    public void deleteProduct(){
-        String key = scanProductKey();
+    public ArrayList<Product> getProducts(){
+        return products;
+    }
 
-        if (obtainProduct(key) != null)
-            removeProduct(key);
-        else{
-            System.out.println("Producto no encontrado");
-            return;
-        }
+    public Map<String, Product> getProductsNameMap(){
+        return productsNameMap;
+    }
 
-        System.out.println("Producto " + key + " borrado exitosamente");
+    public Map<Integer, Product> getProductsIdMap(){
+        return productsIdMap;
     }
 }

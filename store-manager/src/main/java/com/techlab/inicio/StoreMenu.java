@@ -4,6 +4,7 @@ import com.techlab.inicio.order.OrderManager;
 import com.techlab.inicio.product.*;
 import com.techlab.inicio.utils.StringUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -19,32 +20,31 @@ public class StoreMenu {
     private final Map<String, Runnable> actionsMap = new HashMap<>();
 
 
-
     public StoreMenu() {
-        createActionsMap();
-
         productManager = new ProductManager(scanner);
-        orderManager = new OrderManager(scanner);
+        orderManager = new OrderManager(scanner, productManager);
+
+        createActionsMap();
     }
 
     private void createActionsMap() {
-        actionsMap.put("1", this::addProduct);
-        actionsMap.put("agregar producto", this::addProduct);
+        actionsMap.put("1", productManager::addProduct);
+        actionsMap.put("agregar producto", productManager::addProduct);
 
-        actionsMap.put("2", this::listProducts);
-        actionsMap.put("listar productos", this::listProducts);
+        actionsMap.put("2", productManager::listProducts);
+        actionsMap.put("listar productos", productManager::listProducts);
 
-        actionsMap.put("3", this::searchUpdateProduct);
-        actionsMap.put("actualizar producto", this::searchUpdateProduct);
+        actionsMap.put("3", productManager::searchUpdateProduct);
+        actionsMap.put("actualizar producto", productManager::searchUpdateProduct);
 
-        actionsMap.put("4", this::deleteProduct);
-        actionsMap.put("eliminar producto", this::deleteProduct);
+        actionsMap.put("4", productManager::deleteProduct);
+        actionsMap.put("eliminar producto", productManager::deleteProduct);
 
-        actionsMap.put("5", this::createOrder);
-        actionsMap.put("crear un pedido", this::createOrder);
+        actionsMap.put("5", orderManager::createOrder);
+        actionsMap.put("crear un pedido", orderManager::createOrder);
 
-        actionsMap.put("6", this::listOrder);
-        actionsMap.put("listar pedidos", this::listOrder);
+        actionsMap.put("6", orderManager::listOrders);
+        actionsMap.put("listar pedidos", orderManager::listOrders);
 
         actionsMap.put("7", () -> {});
         actionsMap.put("salir", () -> {});
@@ -82,33 +82,5 @@ public class StoreMenu {
                 """);
 
         System.out.print("\nElija una opción: ");
-    }
-
-
-    private void addProduct(){
-        productManager.addProduct();
-    }
-
-    private void listProducts() {
-        productManager.listProducts();
-    }
-
-    private void searchUpdateProduct() {
-        productManager.searchUpdateProduct();
-    }
-
-    private void deleteProduct() {
-        productManager.deleteProduct();
-    }
-
-    //todo: createOrder debe encargarse de pedirle a prodcutManager el vector products, para saber que guardar dentro
-    // deberia guardar el objeto Product de cada producto pedido, junto a su cantidad.
-
-    private void createOrder() {
-        //orderManager.createOrder();
-    }
-
-    private void listOrder() {
-        //orderManager.listOrder();
     }
 }

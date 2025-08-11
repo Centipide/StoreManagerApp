@@ -1,7 +1,6 @@
 package com.techlab.inicio.utils;
 
-import com.techlab.inicio.product.ProductManager;
-
+import java.nio.channels.ScatteringByteChannel;
 import java.util.Scanner;
 
 public class ConsoleUtils {
@@ -46,16 +45,30 @@ public class ConsoleUtils {
 
     public static int scanStock(Scanner scanner){
         System.out.print("Ingrese cantidad de stock: ");
-        int stock = scanner.nextInt();
+        return scanIntGreaterThan(scanner, 0, "Ingrese una cantidad de stock válida: ");
+    }
+
+    public static int scanAmountOfDifProducts(Scanner scanner){
+        System.out.print("Ingrese cantidad de productos diferentes: ");
+        return scanIntGreaterThan(scanner, 1, "Ingrese una cantidad de productos valida: ");
+    }
+
+    public static int scanUnits(Scanner scanner){
+        System.out.print("Ingrese cantidad de unidades del Producto: ");
+        return scanIntGreaterThan(scanner, 1, "Ingrese una cantidad de unidades valida: ");
+    }
+
+    public static int scanIntGreaterThan(Scanner scanner, int minLimit, String errMsg){
+        int integer = scanner.nextInt();
         scanner.nextLine();
-        while (stock < 0){
-            System.out.println("Ingrese una cantidad de stock válida");
-            System.out.print("Ingrese cantidad de stock: ");
-            stock = scanner.nextInt();
+
+        while (!(integer >= minLimit)){
+            System.out.print(errMsg);
+            integer = scanner.nextInt();
             scanner.nextLine();
         }
 
-        return stock;
+        return integer;
     }
 
     public static void showUpdate(String field, String oldField, String newField){

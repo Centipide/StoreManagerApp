@@ -30,6 +30,7 @@ abstract public class Product {
         setBasePrice(basePrice);
     }
 
+    abstract public double getFinalPrice();
     abstract public void print();
     abstract protected String getField(String key);
     abstract protected void updateField(ProductManager manager, Scanner scanner,String key);
@@ -121,4 +122,5 @@ abstract public class Product {
     public int getId() {
         return id;
     }
+
 }

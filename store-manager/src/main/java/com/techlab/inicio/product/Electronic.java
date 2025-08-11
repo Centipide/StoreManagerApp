@@ -21,15 +21,16 @@ public class Electronic extends Product {
     @Override
     public void print() {
         System.out.printf("""
-                *******************************************
+                ********************************************
                 ID: %d
                 Nombre de Producto: %s
                 Stock disponible: %d
                 Precio base: %.2f
                 Tipo de producto: %s
-                *******************************************
+                ********************************************
                 """, getId() ,getName(), getStock(), this.getBasePrice(), this.getClass().getSimpleName());
     }
+
 
     @Override
     protected void updateField(ProductManager manager,Scanner scanner,String key) {
@@ -57,5 +58,10 @@ public class Electronic extends Product {
         printBasicFields();
         //todo: por agregar...
         System.out.println(".");
+    }
+
+    @Override
+    public double getFinalPrice() {
+        return 0;
     }
 }
