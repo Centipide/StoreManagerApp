@@ -1,6 +1,8 @@
 package com.techlab.inicio;
 
+import com.techlab.inicio.order.OrderManager;
 import com.techlab.inicio.product.*;
+import com.techlab.inicio.utils.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,49 +13,18 @@ public class StoreMenu {
 
     private final Scanner scanner = new Scanner(System.in);
     private final ProductManager productManager;
+    private final OrderManager orderManager;
 
     //Se usa String y no int, para poder tener clave tanto númerica como String
     private final Map<String, Runnable> actionsMap = new HashMap<>();
-    private final Map<String, ProductFactory> categoriesFactoryMap = new HashMap<>();
-    private final Map<String, String> categoriesNamesMap = new HashMap<>();
 
 
 
     public StoreMenu() {
         createActionsMap();
-        createCategoriesNames();
-        createCategoriesFactoryMap();
 
-        productManager = new ProductManager(categoriesFactoryMap, categoriesNamesMap);
-    }
-
-    /** categoriesFactoryMap
-     * A partir de categoriesNamesMap obtenemos las claves.
-     */
-    private void createCategoriesFactoryMap(){
-        categoriesFactoryMap.put("bebida", Drink::new);
-        categoriesFactoryMap.put("producto empaquetado", PackagedProduct::new);
-        categoriesFactoryMap.put("accesorio", Accessory::new);
-        categoriesFactoryMap.put("electronico", Electronic::new);
-    }
-
-    /** categoriesNamesMap
-     * La clave y contenido son idénticos por simplicidad. De esta forma, obtengo
-     * la categoría ya sea que el usuario la seleccione ingresando un número o por
-     * su nombre.
-     */
-    private void createCategoriesNames(){
-        categoriesNamesMap.put("1", "bebida");
-        categoriesNamesMap.put("bebida", "bebida");
-
-        categoriesNamesMap.put("2", "producto empaquetado");
-        categoriesNamesMap.put("producto empaquetado", "producto empaquetado");
-
-        categoriesNamesMap.put("3", "accesorio");
-        categoriesNamesMap.put("accesorio", "accesorio");
-
-        categoriesNamesMap.put("4", "electronico");
-        categoriesNamesMap.put("electronico", "electronico");
+        productManager = new ProductManager(scanner);
+        orderManager = new OrderManager(scanner);
     }
 
     private void createActionsMap() {
@@ -92,7 +63,7 @@ public class StoreMenu {
             }
 
             printOptions();
-            option = scanner.nextLine().trim().toLowerCase();
+            option = StringUtils.normalizeKey(scanner.nextLine());
             action = actionsMap.get(option);
         }
 
@@ -134,10 +105,10 @@ public class StoreMenu {
     // deberia guardar el objeto Product de cada producto pedido, junto a su cantidad.
 
     private void createOrder() {
-        orderManager.createOrder();
+        //orderManager.createOrder();
     }
 
     private void listOrder() {
-        orderManager.listOrder();
+        //orderManager.listOrder();
     }
 }

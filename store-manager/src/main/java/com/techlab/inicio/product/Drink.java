@@ -2,7 +2,6 @@ package com.techlab.inicio.product;
 
 import com.techlab.inicio.utils.StringUtils;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 

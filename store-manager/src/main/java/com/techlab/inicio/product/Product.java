@@ -121,6 +121,4 @@ abstract public class Product {
     public int getId() {
         return id;
     }
-
-
 }

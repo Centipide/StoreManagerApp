@@ -1,5 +1,11 @@
 package com.techlab.inicio.order;
 
-public class OrderManager {
+import java.util.Scanner;
 
+public class OrderManager {
+    private final Scanner scanner;
+
+    public OrderManager(Scanner scanner){
+        this.scanner = scanner;
+    }
 }

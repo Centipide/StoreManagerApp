@@ -10,6 +10,7 @@ public class PackagedProduct extends Product {
 
     public PackagedProduct(String name, int stock, double basePrice){
         super(name,stock,basePrice);
+        createFieldsMap();
     }
 
     private void createFieldsMap(){

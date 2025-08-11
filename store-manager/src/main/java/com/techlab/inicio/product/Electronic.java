@@ -10,6 +10,7 @@ public class Electronic extends Product {
 
     public Electronic(String name, int stock, double basePrice){
         super(name,stock,basePrice);
+        createFieldsMap();
     }
 
     private void createFieldsMap(){

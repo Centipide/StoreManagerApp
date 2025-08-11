@@ -1,9 +1,7 @@
 package com.techlab.inicio.product;
 
-import com.techlab.inicio.utils.ConsoleUtils;
 import com.techlab.inicio.utils.StringUtils;
 
-import java.io.Console;
 import java.util.Map;
 import java.util.Scanner;
 
