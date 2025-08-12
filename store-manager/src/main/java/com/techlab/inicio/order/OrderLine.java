@@ -4,7 +4,7 @@ import com.techlab.inicio.product.Product;
 
 public class OrderLine {
     private final Product product;
-    private final int units;
+    private int units;
 
     public OrderLine(Product product, int units){
         this.product = product;
@@ -20,8 +20,21 @@ public class OrderLine {
                 """, product.getId(), product.getName(), units, calcTotalPrice());
     }
 
+    public void increaseUnits(int amount){
+        this.units += amount;
+    }
+
     private double calcTotalPrice(){
         double unitPrice = product.getFinalPrice();
         return unitPrice * units;
     }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public int getUnits() {
+        return this.units;
+    }
+
 }

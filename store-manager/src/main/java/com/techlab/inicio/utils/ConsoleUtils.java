@@ -49,12 +49,12 @@ public class ConsoleUtils {
     }
 
     public static int scanAmountOfDifProducts(Scanner scanner){
-        System.out.print("Ingrese cantidad de productos diferentes: ");
+        System.out.print("Ingrese cantidad productos a agregar al pedido: ");
         return scanIntGreaterThan(scanner, 1, "Ingrese una cantidad de productos valida: ");
     }
 
     public static int scanUnits(Scanner scanner){
-        System.out.print("Ingrese cantidad de unidades del Producto: ");
+        System.out.print("Ingrese cantidad de unidades del producto: ");
         return scanIntGreaterThan(scanner, 1, "Ingrese una cantidad de unidades valida: ");
     }
 

@@ -61,6 +61,16 @@ abstract public class Product {
         setStock(newStock);
     }
 
+    public void decreaseStock(int amount){
+        if (amount <= 0) {
+            throw new IllegalArgumentException("La cantidad a disminuir debe ser positiva");
+        }
+        if (amount > stock) {
+            throw new IllegalStateException("No hay suficiente stock disponible");
+        }
+        stock -= amount;
+    }
+
 
     protected void setName(String name) {
         this.name = StringUtils.titleCase(name);
