@@ -29,7 +29,6 @@ public class Order {
 
     //todo: se puede mejorar para que no tenga que ingresar todo el producto de nuevo si no hay stock
     public boolean createOrderLines() {
-        productManager.listProducts();
         ArrayList<OrderLine> tempOrderLines = new ArrayList<>();
         int i = 0;
 
@@ -108,5 +107,9 @@ public class Order {
             orderLine.print();
         }
         System.out.printf("===========================================\n");
+    }
+
+    public int getId() {
+        return id;
     }
 }

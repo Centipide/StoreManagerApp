@@ -90,6 +90,11 @@ public class ProductManager {
      * validando que los valores sean coherentes (por ejemplo, que el stock no sea negativo).
      */
     public void searchUpdateProduct() {
+        if (products.isEmpty()){
+            System.out.println("Todavia no se han creado Productos");
+            return;
+        }
+
         Product searchedProduct = searchProduct();
         if (searchedProduct == null) //si es null, se ha ingresado salir
             return;
@@ -105,16 +110,17 @@ public class ProductManager {
             return;
         }
 
+        listProducts();
         String key = scanProductKey();
         String name;
         int id;
 
-        Product product = obtainProduct(key);
+        Product productToDelete = obtainProduct(key);
 
-        if (product != null){
-            name = product.getName();
-            id = product.getId();
-            removeProduct(StringUtils.normalizeKey(name),id,product);
+        if (productToDelete != null){
+            name = productToDelete.getName();
+            id = productToDelete.getId();
+            removeProduct(StringUtils.normalizeKey(name),id, productToDelete);
         } else{
             System.out.println("Producto no encontrado");
             return;

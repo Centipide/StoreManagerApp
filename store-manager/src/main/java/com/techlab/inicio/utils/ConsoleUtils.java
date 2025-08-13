@@ -84,6 +84,10 @@ public class ConsoleUtils {
         return scanIntGreaterThan(scanner, 1, "Ingrese cantidad de unidades del producto: ","Ingrese una cantidad de unidades valida: ");
     }
 
+    public static int scanOrderIDToDelete(Scanner scanner){
+        return scanIntGreaterThan(scanner, 1, "Ingrese el ID de la orden a eliminar: ", "Ingrese un ID valido: ");
+    }
+
     public static int scanIntGreaterThan(Scanner scanner, int minLimit,String requestMsg ,String errMsg){
         int integer = minLimit-1;
 

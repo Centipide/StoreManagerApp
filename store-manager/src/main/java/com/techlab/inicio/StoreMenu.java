@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class StoreMenu {
-    private static final String EXIT_ACTION_NUMBER = "7";
+    private static final String EXIT_ACTION_NUMBER = "8";
 
     private final Scanner scanner = new Scanner(System.in);
     private final ProductManager productManager;
@@ -57,7 +57,8 @@ public class StoreMenu {
                 4) Eliminar producto
                 5) Crear un pedido
                 6) Listar pedidos
-                7) Salir
+                7) Eliminar orden
+                8) Salir
                 """);
 
         System.out.print("\nElija una opción (ingrese número o comando): ");
@@ -82,7 +83,10 @@ public class StoreMenu {
         actionsMap.put("6", orderManager::listOrders);
         actionsMap.put("listar pedidos", orderManager::listOrders);
 
-        actionsMap.put("7", () -> {});
+        actionsMap.put("7", orderManager::deleteOrder);
+        actionsMap.put("eliminar pedido", orderManager::deleteOrder);
+
+        actionsMap.put("8", () -> {});
         actionsMap.put("salir", () -> {});
     }
 }
