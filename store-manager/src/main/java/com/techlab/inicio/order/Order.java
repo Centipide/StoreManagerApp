@@ -47,7 +47,7 @@ public class Order {
 
             if (requestedUnits <= availableStock){
                 OrderLine tempOrderLine = new OrderLine(product, requestedUnits);
-                OrderLine existing = orderLineExists(tempOrderLines, product); //devuelve null si no existe
+                OrderLine existing = orderLineExists(tempOrderLines, product);
 
                 if (existing == null){
                     addNewOrderLine(tempOrderLines, tempOrderLine);

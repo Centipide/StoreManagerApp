@@ -1,71 +1,106 @@
 package com.techlab.inicio.utils;
 
 import java.nio.channels.ScatteringByteChannel;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class ConsoleUtils {
     public static boolean confirm(Scanner scanner, String msg){
-        System.out.print(msg + "(S/N): ");
-        String input = scanner.nextLine().trim().toLowerCase();
+        String input;
+        boolean invalid = true;
 
-        while (!input.equals("s") && !input.equals("n")) {
-            System.out.print("Por favor, ingrese 's' o 'n': ");
+        do{
+            System.out.print(msg + "(S/N): ");
             input = scanner.nextLine().trim().toLowerCase();
-        }
+
+            if (!input.equals("s") && !input.equals("n")){
+                System.out.print("Por favor, ingrese 'S' o 'N'");
+            }  else{
+                invalid = false;
+            }
+        } while (invalid);
 
         return input.equals("s");
     }
 
-    public static String scanName(Scanner scanner){
-        System.out.print("Nombre: ");
-        String name = scanner.nextLine().trim();
 
-        while (name.isEmpty()){
-            System.out.println("Error, ingrese nuevamente");
+    public static String scanName(Scanner scanner) {
+        String name;
+        do {
             System.out.print("Nombre: ");
             name = scanner.nextLine().trim();
-        }
+
+            String error = validateName(name);
+            if (error != null) {
+                System.out.println(error);
+                name = null;
+            }
+
+        } while (name == null);
 
         return name;
     }
 
+    private static String validateName(String name) {
+        if (name.isEmpty()) {
+            return "Error, ingrese nuevamente";
+        }
+        if (name.matches("\\d+")) {
+            return "Error, el nombre no puede tener solo números";
+        }
+        return null;
+    }
+
     public static double scanBasePrice(Scanner scanner){
-        System.out.print("Precio base: ");
-        double basePrice = scanner.nextDouble();
-        scanner.nextLine();
+        double basePrice = -1;
+
         while (basePrice < 0){
-            System.out.println("Ingrese un precio base válido");
             System.out.print("Precio base: ");
-            basePrice = scanner.nextDouble();
-            scanner.nextLine();
+            try{
+                basePrice = scanner.nextDouble();
+                scanner.nextLine();
+
+                if (basePrice < 0){
+                    System.out.println("Ingrese un precio base valido");
+                }
+            } catch (InputMismatchException e){
+                System.out.println("Error, ingrese un número valido");
+                scanner.nextLine();
+            }
         }
 
         return basePrice;
     }
 
     public static int scanStock(Scanner scanner){
-        System.out.print("Ingrese cantidad de stock: ");
-        return scanIntGreaterThan(scanner, 0, "Ingrese una cantidad de stock válida: ");
+        return scanIntGreaterThan(scanner, 0,"Ingrese cantidad de stock: " ,"Ingrese una cantidad de stock válida: ");
     }
 
     public static int scanAmountOfDifProducts(Scanner scanner){
-        System.out.print("Ingrese cantidad productos a agregar al pedido: ");
-        return scanIntGreaterThan(scanner, 1, "Ingrese una cantidad de productos valida: ");
+        return scanIntGreaterThan(scanner, 1,"Ingrese cantidad productos a agregar al pedido: ", "Ingrese una cantidad de productos valida: ");
     }
 
     public static int scanUnits(Scanner scanner){
-        System.out.print("Ingrese cantidad de unidades del producto: ");
-        return scanIntGreaterThan(scanner, 1, "Ingrese una cantidad de unidades valida: ");
+        return scanIntGreaterThan(scanner, 1, "Ingrese cantidad de unidades del producto: ","Ingrese una cantidad de unidades valida: ");
     }
 
-    public static int scanIntGreaterThan(Scanner scanner, int minLimit, String errMsg){
-        int integer = scanner.nextInt();
-        scanner.nextLine();
+    public static int scanIntGreaterThan(Scanner scanner, int minLimit,String requestMsg ,String errMsg){
+        int integer = minLimit-1;
 
         while (!(integer >= minLimit)){
-            System.out.print(errMsg);
-            integer = scanner.nextInt();
-            scanner.nextLine();
+            System.out.print(requestMsg);
+
+            try{
+                integer = scanner.nextInt();
+                scanner.nextLine();
+
+                if (!(integer >= minLimit)){
+                    System.out.println(errMsg);
+                }
+            } catch (InputMismatchException e){
+                System.out.println("Error, ingrese un número válido");
+                scanner.nextLine();
+            }
         }
 
         return integer;
@@ -76,5 +111,10 @@ public class ConsoleUtils {
                 StringUtils.titleCase(field),
                 StringUtils.titleCase(oldField),
                 StringUtils.titleCase(newField));
+    }
+
+    public static void clearScreen() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
     }
 }

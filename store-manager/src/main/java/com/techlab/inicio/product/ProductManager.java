@@ -100,16 +100,27 @@ public class ProductManager {
 
     //4)
     public void deleteProduct(){
-        String key = scanProductKey();
+        if (products.isEmpty()){
+            System.out.println("Todavía no se han cargado productos");
+            return;
+        }
 
-        if (obtainProduct(key) != null)
-            removeProduct(key);
-        else{
+        String key = scanProductKey();
+        String name;
+        int id;
+
+        Product product = obtainProduct(key);
+
+        if (product != null){
+            name = product.getName();
+            id = product.getId();
+            removeProduct(StringUtils.normalizeKey(name),id,product);
+        } else{
             System.out.println("Producto no encontrado");
             return;
         }
 
-        System.out.println("Producto " + key + " borrado exitosamente");
+        System.out.printf("Producto %s(ID: %d) borrado exitosamente\n", name, id);
     }
 
     private void addProductMap(Product product){
@@ -127,9 +138,9 @@ public class ProductManager {
         productsNameMap.put(StringUtils.normalizeKey(newKey), product);
     }
 
-    private void removeProduct(String key){
-        Product product = productsNameMap.get(key);
-        productsNameMap.remove(key);
+    private void removeProduct(String nameKey, int idKey, Product product){
+        productsIdMap.remove(idKey);
+        productsNameMap.remove(nameKey);
         products.remove(product);
     }
 
@@ -145,15 +156,17 @@ public class ProductManager {
     }
 
     private String scanCategoryName(){
-        printCategories();
-        String option = scanner.nextLine().trim().toLowerCase();
-        String categoryName = categoriesNamesMap.get(option);
+        String categoryName = null;
 
         while (categoryName == null){
-            System.out.println("Opción inválida, Ingrese nuevamente");
             printCategories();
-            option = scanner.nextLine().trim().toLowerCase();
+            String option = StringUtils.normalizeKey(scanner.nextLine());
             categoryName = categoriesNamesMap.get(option);
+
+            if (categoryName == null){
+                System.out.println("Opción inválida, Ingrese nuevamente");
+            }
+
         }
         return categoryName;
     }
@@ -220,7 +233,7 @@ public class ProductManager {
         try {
             int id = Integer.parseInt(key);
             product = productsIdMap.get(id);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ignored) {
         }
         return product;
     }
@@ -230,14 +243,18 @@ public class ProductManager {
     }
 
     private String scanProductKey(){
-        System.out.print("Ingrese el Nombre o ID del producto (o salir para cancelar): ");
-        String key = scanner.nextLine().trim();
+        listProducts();
+        String key;
 
-        while (key.isEmpty()){
-            System.out.println("Error, ingrese nuevamente");
-            System.out.print("Nombre o ID: ");
+
+        do {
+            System.out.print("Ingrese el Nombre o ID del producto (o salir para cancelar): ");
             key = scanner.nextLine().trim();
-        }
+            if (key.isEmpty()) {
+                System.out.println("Error, ingrese nuevamente");
+            }
+        } while (key.isEmpty());
+
 
         return StringUtils.normalizeKey(key);
     }

@@ -2,9 +2,9 @@ package com.techlab.inicio;
 
 import com.techlab.inicio.order.OrderManager;
 import com.techlab.inicio.product.*;
+import com.techlab.inicio.utils.ConsoleUtils;
 import com.techlab.inicio.utils.StringUtils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -25,6 +25,42 @@ public class StoreMenu {
         orderManager = new OrderManager(scanner, productManager);
 
         createActionsMap();
+    }
+
+    public void run(){
+        printOptions();
+        String option = scanner.nextLine().trim().toLowerCase();
+        Runnable action = actionsMap.get(option);
+
+        while (!option.equalsIgnoreCase("salir") && !option.equals(EXIT_ACTION_NUMBER)){
+            if (action != null)
+                action.run();
+
+            ConsoleUtils.clearScreen();
+
+            if (action == null)
+                System.out.println("Opción inválida, Ingrese nuevamente");
+
+            printOptions();
+            option = StringUtils.normalizeKey(scanner.nextLine());
+            action = actionsMap.get(option);
+        }
+
+        System.out.println("Saliendo...");
+    }
+
+    private void printOptions(){
+        System.out.print("""
+                1) Agregar producto
+                2) Listar productos
+                3) Buscar/Actualizar producto
+                4) Eliminar producto
+                5) Crear un pedido
+                6) Listar pedidos
+                7) Salir
+                """);
+
+        System.out.print("\nElija una opción (ingrese número o comando): ");
     }
 
     private void createActionsMap() {
@@ -48,39 +84,5 @@ public class StoreMenu {
 
         actionsMap.put("7", () -> {});
         actionsMap.put("salir", () -> {});
-    }
-
-    public void run(){
-        printOptions();
-        String option = scanner.nextLine().trim().toLowerCase();
-        Runnable action = actionsMap.get(option);
-
-        while (!option.equalsIgnoreCase("salir") && !option.equals(EXIT_ACTION_NUMBER)){
-            if (action != null)
-                action.run();
-            else{
-                System.out.println("Opción inválida, Ingrese nuevamente");
-            }
-
-            printOptions();
-            option = StringUtils.normalizeKey(scanner.nextLine());
-            action = actionsMap.get(option);
-        }
-
-        System.out.println("Saliendo...");
-    }
-
-    private void printOptions(){
-        System.out.print("""
-                1) Agregar producto
-                2) Listar productos
-                3) Buscar/Actualizar producto
-                4) Eliminar producto
-                5) Crear un pedido
-                6) Listar pedidos
-                7) Salir
-                """);
-
-        System.out.print("\nElija una opción: ");
     }
 }
