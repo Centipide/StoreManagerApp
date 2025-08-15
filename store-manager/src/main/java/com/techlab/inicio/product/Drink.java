@@ -11,13 +11,17 @@ public class Drink extends Product {
 
     public Drink(String name, int stock, double basePrice){
         super(name,stock,basePrice);
-        createFieldsMap();
+        fieldsMap = getFieldsMap();
+        //createFieldsMap();
     }
 
+    /*
     private void createFieldsMap(){
         fieldsMap = createBaseFieldsMap();
         //todo: por agregar...
     }
+
+     */
 
 
     @Override

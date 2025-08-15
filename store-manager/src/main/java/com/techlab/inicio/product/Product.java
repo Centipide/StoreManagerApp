@@ -3,6 +3,7 @@ package com.techlab.inicio.product;
 import com.techlab.inicio.utils.ConsoleUtils;
 import com.techlab.inicio.utils.StringUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -12,22 +13,44 @@ abstract public class Product {
     public static final String FIELD_BASE_PRICE = "precio base";
     public static final String FIELD_STOCK = "stock";
 
-    private final int id;                //final: Una vez asignado no se puede cambiar
-    private static int counterId = 0;   //static: Pertenece a la clase misma, no a las instancias
+    // explicacion en draw.io
+    public static final ArrayList<String> BASE_FIELDS = new ArrayList<>();
+    public static final Map<String, String> BASE_FIELDS_MAP = new HashMap<>();
+    static {
+        BASE_FIELDS.add(FIELD_NAME);
+        BASE_FIELDS.add(FIELD_BASE_PRICE);
+        BASE_FIELDS.add(FIELD_STOCK);
+        for (int i = 0; i < BASE_FIELDS.size(); i++) {
+            BASE_FIELDS_MAP.put(BASE_FIELDS.get(i), BASE_FIELDS.get(i));
+            BASE_FIELDS_MAP.put(String.valueOf(i + 1), BASE_FIELDS.get(i));
+        }
+    }
+
+    private static int counterId = 0;
+
+    private final int id;
+    public final ArrayList<String> stringKeyFields;
+    private final Map<String, String> fieldsMap;
     private String name ;
     private int stock;
     private double basePrice;
     private double taxRate;
 
-    {
+    protected Product(String name, int stock, double basePrice){
         counterId++;
         id = counterId;
-    }
 
-    protected Product(String name, int stock, double basePrice){
         setName(name);
         setStock(stock);
         setBasePrice(basePrice);
+
+        /*
+        Las clases hijas puedan usar estos 3 campos básicos y el mapeo,
+        para que cada una le vaya agregando campos a su preferencia. De esta forma
+        evitamos repetir código y nos aseguramos que todas tengan estos 3 campos.
+         */
+        stringKeyFields = new ArrayList<>(BASE_FIELDS);
+        fieldsMap = new HashMap<>(BASE_FIELDS_MAP);
     }
 
     abstract public double getFinalPrice();
@@ -93,30 +116,18 @@ abstract public class Product {
         this.taxRate = taxRate;
     }
 
-    protected Map<String, String> createBaseFieldsMap(){
-        Map<String, String> fieldsMap = new HashMap<>();
-        fieldsMap.put("1", FIELD_NAME);
-        fieldsMap.put(FIELD_NAME, FIELD_NAME);
-
-        fieldsMap.put("2", FIELD_BASE_PRICE);
-        fieldsMap.put(FIELD_BASE_PRICE, FIELD_BASE_PRICE);
-
-        fieldsMap.put("3", FIELD_STOCK);
-        fieldsMap.put(FIELD_STOCK, FIELD_STOCK);
-
-        return fieldsMap;
-    }
-
     public void printBasicFields() {
         System.out.println("1. Nombre: " + name);
         System.out.println("2. Precio: $" + basePrice);
         System.out.println("3. Stock:  " + id);
     }
 
+    public Map<String, String> getFieldsMap() {
+        return fieldsMap;
+    }
     public void printFullFields() {
         printBasicFields();
     }
-
     public String getName() {
         return name;
     }

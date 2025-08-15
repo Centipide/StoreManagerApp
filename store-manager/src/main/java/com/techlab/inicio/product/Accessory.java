@@ -10,13 +10,16 @@ public class Accessory extends Product {
 
     public Accessory(String name, int stock, double basePrice){
         super(name,stock,basePrice);
-        createFieldsMap();
+        fieldsMap = getFieldsMap();
+        //createFieldsMap();
     }
-
+/*
     private void createFieldsMap(){
         fieldsMap = createBaseFieldsMap();
         //todo: por agregar...
     }
+
+ */
 
     @Override
     public void print() {

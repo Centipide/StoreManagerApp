@@ -9,6 +9,12 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class ProductManager {
+    private static String ACCESORY= "accesorio";
+    private static String DRINK = "bebida";
+    private static String ELECTRONIC = "electronico";
+    private static String PACKAGED_PRODUCT = "producto empaquetado";
+    private final String[] stringKeyCategory;
+
     private final ArrayList<Product> products = new ArrayList<>();
     private final Scanner scanner;
 
@@ -18,20 +24,24 @@ public class ProductManager {
     private final Map<Integer, Product> productsIdMap = new HashMap<>();
 
     public ProductManager(Scanner scanner) {
+        this.scanner = scanner;
+
+        stringKeyCategory = new String[]{
+                ACCESORY, DRINK, ELECTRONIC, PACKAGED_PRODUCT
+        };
+
         createCategoriesFactoryMap();
         createCategoriesNames();
-
-        this.scanner = scanner;
     }
 
     /** categoriesFactoryMap
      * A partir de categoriesNamesMap obtenemos las claves.
      */
     private void createCategoriesFactoryMap(){
-        categoriesFactoryMap.put("bebida", Drink::new);
-        categoriesFactoryMap.put("producto empaquetado", PackagedProduct::new);
-        categoriesFactoryMap.put("accesorio", Accessory::new);
-        categoriesFactoryMap.put("electronico", Electronic::new);
+        categoriesFactoryMap.put(ACCESORY, Accessory::new);
+        categoriesFactoryMap.put(DRINK, Drink::new);
+        categoriesFactoryMap.put(ELECTRONIC, Electronic::new);
+        categoriesFactoryMap.put(PACKAGED_PRODUCT, PackagedProduct::new);
     }
 
     /** categoriesNamesMap
@@ -40,17 +50,10 @@ public class ProductManager {
      * su nombre.
      */
     private void createCategoriesNames(){
-        categoriesNamesMap.put("1", "bebida");
-        categoriesNamesMap.put("bebida", "bebida");
-
-        categoriesNamesMap.put("2", "producto empaquetado");
-        categoriesNamesMap.put("producto empaquetado", "producto empaquetado");
-
-        categoriesNamesMap.put("3", "accesorio");
-        categoriesNamesMap.put("accesorio", "accesorio");
-
-        categoriesNamesMap.put("4", "electronico");
-        categoriesNamesMap.put("electronico", "electronico");
+        for(int i = 0; i < stringKeyCategory.length; i++){
+            categoriesNamesMap.put(stringKeyCategory[i], stringKeyCategory[i]);
+            categoriesNamesMap.put(String.valueOf(i + 1), stringKeyCategory[i]);
+        }
     }
 
     //1)
@@ -150,15 +153,11 @@ public class ProductManager {
         products.remove(product);
     }
 
-
     private void printCategories() {
-        System.out.print("""
-                1) Bebida
-                2) Producto Empaquetado
-                3) Accesorio
-                4) Electrónico
-                """);
-        System.out.print("\nElija una opción: ");
+        for (int i = 0; i < stringKeyCategory.length; i++){
+            System.out.printf("%d) %s\n", i + 1 ,StringUtils.titleCase(stringKeyCategory[i]));
+        }
+        System.out.print("Elija una opción (ingrese número o comando): ");
     }
 
     private String scanCategoryName(){
