@@ -58,21 +58,26 @@ public class ProductManager {
 
     //1)
     public void addProduct(){
-        System.out.println("Ingrese el nuevo Producto: ");
+        System.out.println("Ingrese el nuevo Producto. ");
         String name = ConsoleUtils.scanName(scanner);
+        String brand = ConsoleUtils.scanBrand(scanner);
         double basePrice = ConsoleUtils.scanBasePrice(scanner);
         int stock = ConsoleUtils.scanStock(scanner);
-        String categoryName = scanCategoryName(); //también sirve como key para categoriesFactoryMap
+        String categoryName = scanCategoryName();
         ProductFactory productFactory = categoriesFactoryMap.get(categoryName);
 
-        if (productFactory != null) {
-            Product newProduct = productFactory.create(name, stock, basePrice);
-            products.add(newProduct);
-            addProductMap(newProduct);
-            System.out.println("Producto agregado exitosamente.");
-        } else {
+        if (productFactory == null){
             System.out.println("Error al crear producto.");
+            return;
         }
+        Product newProduct = productFactory.create(name, brand, stock, basePrice);
+
+        if (ConsoleUtils.confirm(scanner, "Desea definir los campos específicos del producto?")){
+            newProduct.setSpecificFields(scanner);
+        }
+        products.add(newProduct);
+        addProductMap(newProduct);
+        System.out.println("Producto agregado exitosamente.");
     }
 
     //2)

@@ -9,9 +9,9 @@ public class Drink extends Product {
     private static Map<String,String> fieldsMap;
 
 
-    public Drink(String name, int stock, double basePrice){
-        super(name,stock,basePrice);
-        fieldsMap = getFieldsMap();
+    public Drink(String name, String brand ,int stock, double basePrice){
+        super(name, brand, stock, basePrice);
+        fieldsMap = getBaseFieldAliasesMap();
         //createFieldsMap();
     }
 
@@ -30,11 +30,12 @@ public class Drink extends Product {
                 ********************************************
                 ID: %d
                 Nombre de Producto: %s
+                Marca: %s
                 Stock disponible: %d
                 Precio base: %.2f
                 Tipo de producto: %s
                 ********************************************
-                """, getId() ,getName(), getStock(), this.getBasePrice(), this.getClass().getSimpleName());
+                """, getId() ,getName(), getBrand(), getStock(), this.getBasePrice(), this.getClass().getSimpleName());
     }
 
 
@@ -51,6 +52,8 @@ public class Drink extends Product {
             case FIELD_STOCK:
                 updateStock(scanner);
                 break;
+            case FIELD_BRAND:
+                updateBrand(scanner);
         }
     }
 
@@ -65,6 +68,11 @@ public class Drink extends Product {
         printBasicFields();
         //todo: por agregar...
         System.out.println(".");
+    }
+
+    @Override
+    public void setSpecificFields(Scanner scanner) {
+
     }
 
     @Override

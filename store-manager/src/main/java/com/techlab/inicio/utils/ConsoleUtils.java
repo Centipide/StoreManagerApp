@@ -25,55 +25,19 @@ public class ConsoleUtils {
 
 
     public static String scanName(Scanner scanner) {
-        String name;
-        do {
-            System.out.print("Nombre: ");
-            name = scanner.nextLine().trim();
-
-            String error = validateName(name);
-            if (error != null) {
-                System.out.println(error);
-                name = null;
-            }
-
-        } while (name == null);
-
-        return name;
-    }
-
-    private static String validateName(String name) {
-        if (name.isEmpty()) {
-            return "Error, ingrese nuevamente";
-        }
-        if (name.matches("\\d+")) {
-            return "Error, el nombre no puede tener solo números";
-        }
-        return null;
+        return scanString(scanner, "Ingrese el nombre: ");
     }
 
     public static double scanBasePrice(Scanner scanner){
-        double basePrice = -1;
-
-        while (basePrice < 0){
-            System.out.print("Precio base: ");
-            try{
-                basePrice = scanner.nextDouble();
-                scanner.nextLine();
-
-                if (basePrice < 0){
-                    System.out.println("Ingrese un precio base valido");
-                }
-            } catch (InputMismatchException e){
-                System.out.println("Error, ingrese un número valido");
-                scanner.nextLine();
-            }
-        }
-
-        return basePrice;
+        return scanDouble(scanner, "Ingrese un precio base: ");
     }
 
     public static int scanStock(Scanner scanner){
         return scanIntGreaterThan(scanner, 0,"Ingrese cantidad de stock: " ,"Ingrese una cantidad de stock válida: ");
+    }
+
+    public static String scanBrand(Scanner scanner) {
+        return scanString(scanner, "Ingrese el nombre de la marca: ");
     }
 
     public static int scanAmountOfDifProducts(Scanner scanner){
@@ -86,6 +50,14 @@ public class ConsoleUtils {
 
     public static int scanOrderIDToDelete(Scanner scanner){
         return scanIntGreaterThan(scanner, 1, "Ingrese el ID de la orden a eliminar: ", "Ingrese un ID valido: ");
+    }
+
+    public static String scanMaterial(Scanner scanner){
+        return scanString(scanner, "Ingrese el/los materiales que componen el producto: ");
+    }
+
+    public static String scanColour(Scanner scanner){
+        return scanString(scanner, "Ingrese el/los colores del producto: ");
     }
 
     public static int scanIntGreaterThan(Scanner scanner, int minLimit,String requestMsg ,String errMsg){
@@ -108,6 +80,56 @@ public class ConsoleUtils {
         }
 
         return integer;
+    }
+
+    public static String scanString(Scanner scanner, String requestMsg){
+        String text;
+        do {
+            System.out.print(requestMsg);
+            text = scanner.nextLine().trim();
+
+            String error = validateString(text);
+            if (error != null) {
+                System.out.println(error);
+                text = null;
+            }
+
+        } while (text == null);
+
+        return text;
+    }
+
+    public static double scanDouble(Scanner scanner, String requestMsg){
+        double number = -1;
+
+        do {
+            System.out.print(requestMsg);
+            try{
+                number = scanner.nextDouble();
+                scanner.nextLine();
+
+                if (number < 0){
+                    System.out.println("Error, Ingrese un número válido.");
+                }
+
+            } catch (InputMismatchException e){
+                System.out.println("Error, ingrese un número valido");
+                scanner.nextLine();
+            }
+
+        } while (number < 0);
+
+        return number;
+    }
+
+    private static String validateString(String text) {
+        if (text.isEmpty()) {
+            return "Error, ingrese nuevamente";
+        }
+        if (text.matches("\\d+")) {
+            return "Error, el campo no puede tener solo números";
+        }
+        return null;
     }
 
     public static void showUpdate(String field, String oldField, String newField){
