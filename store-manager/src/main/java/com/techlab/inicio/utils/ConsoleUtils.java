@@ -1,6 +1,8 @@
 package com.techlab.inicio.utils;
 
-import java.nio.channels.ScatteringByteChannel;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -25,39 +27,148 @@ public class ConsoleUtils {
 
 
     public static String scanName(Scanner scanner) {
-        return scanString(scanner, "Ingrese el nombre: ");
+        return scanString(
+                scanner,
+                "Ingrese el nombre: "
+        );
     }
 
     public static double scanBasePrice(Scanner scanner){
-        return scanDouble(scanner, "Ingrese un precio base: ");
+        return scanDoubleGreaterThan(
+                scanner,
+                0 ,
+                "Ingrese un precio base: ",
+                "Ingrese un precio base valido: "
+        );
     }
 
     public static int scanStock(Scanner scanner){
-        return scanIntGreaterThan(scanner, 0,"Ingrese cantidad de stock: " ,"Ingrese una cantidad de stock válida: ");
+        return scanIntGreaterThan(
+                scanner,
+                0,
+                "Ingrese cantidad de stock: " ,
+                "Ingrese una cantidad de stock válida: "
+        );
     }
 
     public static String scanBrand(Scanner scanner) {
-        return scanString(scanner, "Ingrese el nombre de la marca: ");
+        return scanString(
+                scanner,
+                "Ingrese el nombre de la marca: "
+        );
     }
 
     public static int scanAmountOfDifProducts(Scanner scanner){
-        return scanIntGreaterThan(scanner, 1,"Ingrese cantidad productos a agregar al pedido: ", "Ingrese una cantidad de productos valida: ");
+        return scanIntGreaterThan(
+                scanner,
+                1,
+                "Ingrese cantidad productos a agregar al pedido: ",
+                "Ingrese una cantidad de productos valida (mayor a cero): "
+        );
     }
 
     public static int scanUnits(Scanner scanner){
-        return scanIntGreaterThan(scanner, 1, "Ingrese cantidad de unidades del producto: ","Ingrese una cantidad de unidades valida: ");
+        return scanIntGreaterThan(
+                scanner,
+                1,
+                "Ingrese cantidad de unidades del producto: ",
+                "Ingrese una cantidad de unidades valida (mayor a cero): "
+        );
     }
 
     public static int scanOrderIDToDelete(Scanner scanner){
-        return scanIntGreaterThan(scanner, 1, "Ingrese el ID de la orden a eliminar: ", "Ingrese un ID valido: ");
+        return scanIntGreaterThan(
+                scanner,
+                1,
+                "Ingrese el ID de la orden a eliminar: ",
+                "Ingrese un ID valido (mayor a 0): "
+        );
     }
 
     public static String scanMaterial(Scanner scanner){
-        return scanString(scanner, "Ingrese el/los materiales que componen el producto: ");
+        return scanString(
+                scanner,
+                "Ingrese el/los materiales que componen el producto: "
+        );
     }
 
     public static String scanColour(Scanner scanner){
-        return scanString(scanner, "Ingrese el/los colores del producto: ");
+        return scanString(
+                scanner,
+                "Ingrese el/los colores del producto: "
+        );
+    }
+
+    public static double scanVolume(Scanner scanner){
+        return scanDoubleGreaterThan(
+                scanner,
+                0 ,
+                "Ingrese el volumen el litros: ",
+                "Ingrese un volumen en litros valido: "
+        );
+    }
+
+    public static String scanType(Scanner scanner){
+        return scanString(
+                scanner,
+                "Ingrese el tipo de bebida (soda, jugo, agua, alcohol, etc.): "
+        );
+    }
+
+    public static String scanRecTemperature(Scanner scanner){
+        return scanString(
+                scanner,
+                "Ingrese temperatura recomendada (frio, temperatura ambiente, etc.): "
+        );
+    }
+
+    public static double scanWeight(Scanner scanner){
+        return scanDoubleGreaterThan(
+                scanner,
+                1,
+                "Ingrese el peso en gramos: ",
+                "Ingrese un peso en gramos valido :"
+        );
+    }
+
+    public static LocalDate scanExpirationDate(Scanner scanner){
+        return scanDate(
+                scanner,
+                LocalDate.now(),
+                "Ingrese la fecha de vencimiento (ej: 16/08/2025): ",
+                "Ingrese una fecha de vencimiento valida"
+        );
+    }
+
+    public static String scanIngredients(Scanner scanner){
+        return scanString(
+                scanner,
+                "Ingrese los ingredientes del producto: "
+        );
+    }
+
+    public static String scanModel(Scanner scanner){
+        return scanString(
+                scanner,
+                "Ingrese el modelo del producto: "
+        );
+    }
+
+    public static int scanWarrantyMonths(Scanner scanner){
+        return scanIntGreaterThan(scanner,
+                0,
+                "Ingrese la cantidad de meses de garantía: ",
+                "Ingrese una cantidad de meses valida (0 o más): "
+        );
+    }
+
+    public static double scanPowerConsumption(Scanner scanner){
+        return scanDoubleGreaterThan(
+                scanner,
+                0,
+                "Ingrese el consumo eléctrio en Watts: ",
+                "Ingrese un valor de consumo válido en Watts (0 o más): "
+        );
     }
 
     public static int scanIntGreaterThan(Scanner scanner, int minLimit,String requestMsg ,String errMsg){
@@ -99,27 +210,49 @@ public class ConsoleUtils {
         return text;
     }
 
-    public static double scanDouble(Scanner scanner, String requestMsg){
-        double number = -1;
+    public static double scanDoubleGreaterThan(Scanner scanner, int minLimit, String requestMsg, String errMsg){
+        int number = minLimit - 1;
 
-        do {
+        while (!(number >= minLimit)){
             System.out.print(requestMsg);
+
             try{
-                number = scanner.nextDouble();
+                number = scanner.nextInt();
                 scanner.nextLine();
 
-                if (number < 0){
-                    System.out.println("Error, Ingrese un número válido.");
+                if (!(number >= minLimit)){
+                    System.out.println(errMsg);
                 }
-
             } catch (InputMismatchException e){
-                System.out.println("Error, ingrese un número valido");
+                System.out.println("Error, ingrese un número válido");
                 scanner.nextLine();
             }
-
-        } while (number < 0);
+        }
 
         return number;
+    }
+
+    public static LocalDate scanDate(Scanner scanner, LocalDate minDate, String requestMsg, String errMsg) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate date = null;
+
+        while (date == null) {
+            System.out.print(requestMsg);
+            String input = scanner.nextLine().trim();
+
+            try {
+                date = LocalDate.parse(input, formatter);
+
+                if (date.isBefore(minDate)) {
+                    System.out.println(errMsg + " (La fecha debe ser posterior o igual a " + minDate.format(formatter) + ")");
+                    date = null;
+                }
+            } catch (DateTimeParseException e) {
+                System.out.println("Formato inválido. Use el formato dd/MM/yyyy.");
+            }
+        }
+
+        return date;
     }
 
     private static String validateString(String text) {

@@ -70,10 +70,9 @@ public class ProductManager {
             System.out.println("Error al crear producto.");
             return;
         }
-        Product newProduct = productFactory.create(name, brand, stock, basePrice);
-
+        Product newProduct = productFactory.create(name, brand, stock, basePrice, scanner);
         if (ConsoleUtils.confirm(scanner, "Desea definir los campos específicos del producto?")){
-            newProduct.setSpecificFields(scanner);
+            newProduct.setSpecificFields();
         }
         products.add(newProduct);
         addProductMap(newProduct);
@@ -186,7 +185,7 @@ public class ProductManager {
             return;
 
         String selectedField = selectField(product);
-        product.updateField(this, scanner, selectedField);
+        product.updateField(this, selectedField);
     }
 
     private String selectField(Product product){

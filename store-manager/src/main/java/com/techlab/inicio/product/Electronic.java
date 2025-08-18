@@ -1,25 +1,42 @@
 package com.techlab.inicio.product;
 
+import com.techlab.inicio.utils.ConsoleUtils;
 import com.techlab.inicio.utils.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
 
 public class Electronic extends Product {
-    private static Map<String,String> fieldsMap;
+    private static final String PRODUCT_TYPE = "Electronico";
+    private static final String FIELD_MODEL = "modelo";
+    private static final String FIELD_WARRANTY_MONTHS = "meses de garantia";
+    private static final String FIELD_POWER_CONSUMPTION = "consumo de energia";
 
-    public Electronic(String name, String brand,int stock, double basePrice){
-        super(name, brand, stock, basePrice);
-        fieldsMap = getBaseFieldAliasesMap();
-        //createFieldsMap();
+    private static final String[] specificFields = {FIELD_MODEL, FIELD_WARRANTY_MONTHS, FIELD_POWER_CONSUMPTION};
+    private static Map<String,String> fullFieldAliasesMap;
+    private static ArrayList<String> fullStringKeyFields;
+    Map<String, Object> fullFieldValuesMap;
+
+    private String model = null;
+    private Integer warrantyMonths = null;
+    private Double powerConsumption = null;
+
+    public Electronic(String name, String brand,int stock, double basePrice, Scanner scanner){
+        super(name, brand, stock, basePrice, scanner);
+        fullFieldValuesMap = defineFullValuesMap(specificFields);
+        fullStringKeyFields = defineFullKeys(specificFields);
+        fullFieldAliasesMap = defineFullAliasesMap(specificFields, fullFieldValuesMap);
     }
 
-    /*
-    private void createFieldsMap(){
-        fieldsMap = createBaseFieldsMap();
-        //todo: por agregar...
+    @Override
+    public void setSpecificFields() {
+        updateModel();
+        updateWarrantyMonths();
+        updatePowerConsumption();
+
+        System.out.println("Carga de datos especificos exitosa.");
     }
-     */
 
     @Override
     public void print() {
@@ -29,50 +46,130 @@ public class Electronic extends Product {
                 Nombre de Producto: %s
                 Marca: %s
                 Stock disponible: %d
-                Precio base: %.2f
+                Precio base: %s
                 Tipo de producto: %s
+                Modelo: %s
+                Meses de garantía: %s
+                Consumo de energía: %s
                 ********************************************
-                """, getId() ,getName(), getBrand(), getStock(), this.getBasePrice(), this.getClass().getSimpleName());
+                """, getId() ,getName(), getBrand(), getStock(), getBasePriceString(), PRODUCT_TYPE,
+                getModel(), getWarrantyMonthsString(), getPowerConsumptionString());
     }
 
 
     @Override
-    protected void updateField(ProductManager manager,Scanner scanner,String key) {
+    protected void updateField(ProductManager manager, String key) {
         switch (StringUtils.normalizeKey(key)){
             case FIELD_NAME:
-                updateName(manager, scanner);
+                updateName(manager);
                 break;
             case FIELD_BASE_PRICE:
-                updateBasePrice(scanner);
+                updateBasePrice();
                 break;
             case FIELD_STOCK:
-                updateStock(scanner);
+                updateStock();
                 break;
             case FIELD_BRAND:
-                updateBrand(scanner);
+                updateBrand();
+                break;
+            case FIELD_MODEL:
+                updateModel();
+                break;
+            case FIELD_WARRANTY_MONTHS:
+                updateWarrantyMonths();
+                break;
+            case FIELD_POWER_CONSUMPTION:
+                updatePowerConsumption();
         }
+    }
+
+    private void updateModel() {
+        updateField(
+                FIELD_MODEL,
+                this::getModel,
+                ConsoleUtils::scanModel,
+                this::setModel,
+                fullFieldValuesMap
+        );
+    }
+
+    private void updateWarrantyMonths() {
+        updateField(
+                FIELD_WARRANTY_MONTHS,
+                this::getWarrantyMonths,
+                ConsoleUtils::scanWarrantyMonths,
+                this::setWarrantyMonths,
+                fullFieldValuesMap
+        );
+    }
+
+    private void updatePowerConsumption() {
+        updateField(
+                FIELD_POWER_CONSUMPTION,
+                this::getPowerConsumption,
+                ConsoleUtils::scanPowerConsumption,
+                this::setPowerConsumption,
+                fullFieldValuesMap
+        );
     }
 
 
     @Override
     protected String getField(String key) {
-        return fieldsMap.get(key);
+        return fullFieldAliasesMap.get(key);
     }
 
     @Override
     public void printFullFields(){
-        printBasicFields();
-        //todo: por agregar...
-        System.out.println(".");
-    }
-
-    @Override
-    public void setSpecificFields(Scanner scanner) {
-
+        for (int i = 0; i < fullFieldValuesMap.size(); i++) {
+            System.out.printf("%d. %s: %s\n", i + 1, StringUtils.titleCase(fullStringKeyFields.get(i)) ,
+                    fullFieldValuesMap.get(fullStringKeyFields.get(i)));
+        }
     }
 
     @Override
     public double getFinalPrice() {
         return 0;
+    }
+
+    public String getModel() {
+        if (model == null)
+            return UNASIGNED;
+        return model;
+    }
+
+    //lo declare como primitiva para que updateFields pueda verificar si es null.
+    public Integer getWarrantyMonths() {
+        return warrantyMonths;
+    }
+    public Double getPowerConsumption() {
+        return powerConsumption;
+    }
+
+    public void setModel(String model) {
+        this.model = StringUtils.titleCase(model);
+    }
+    public void setWarrantyMonths(int warrantyMonths) {
+        this.warrantyMonths = warrantyMonths;
+    }
+    public void setPowerConsumption(double powerConsumption) {
+        this.powerConsumption = powerConsumption;
+    }
+
+    public String getPowerConsumptionString(){
+        if (powerConsumption == null)
+            return UNASIGNED;
+
+        if (powerConsumption < 1000)
+            return String.format("%.2f W", powerConsumption);
+        else
+            return String.format("%.2f kW", powerConsumption/1000);
+    }
+    public String getWarrantyMonthsString(){
+        if (warrantyMonths == null){
+            return UNASIGNED;
+        }
+
+        return String.valueOf(warrantyMonths);
     }
 }

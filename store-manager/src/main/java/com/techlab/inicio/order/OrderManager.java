@@ -55,8 +55,9 @@ public class OrderManager {
             int orderIDToDelete = ConsoleUtils.scanOrderIDToDelete(scanner);
 
             position = findOrderById(orders, orderIDToDelete);
-            if (position != NOT_FOUND){
+            if (position == NOT_FOUND){
                 System.out.println("No se encontró una orden con ese ID. Intente de nuevo.");
+            } else{
                 invalid = false;
             }
         } while (invalid);

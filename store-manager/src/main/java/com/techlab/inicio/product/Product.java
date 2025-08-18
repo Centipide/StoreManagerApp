@@ -3,12 +3,14 @@ package com.techlab.inicio.product;
 import com.techlab.inicio.utils.ConsoleUtils;
 import com.techlab.inicio.utils.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 abstract public class Product {
+    protected static final String UNASIGNED = "No asignado";
+
     public static final String FIELD_NAME = "nombre";
     public static final String FIELD_BRAND = "marca";
     public static final String FIELD_BASE_PRICE = "precio base";
@@ -30,6 +32,7 @@ abstract public class Product {
 
     private static int counterId = 0;
 
+    protected final Scanner scanner;
     private final int id;
     public final ArrayList<String> baseStringKeyFields;
     private final Map<String, String> baseFieldAliasesMap;
@@ -39,13 +42,14 @@ abstract public class Product {
     private String brand;
     private double taxRate;
 
-    abstract public void setSpecificFields(Scanner scanner);
+    abstract public void setSpecificFields();
     abstract public double getFinalPrice();
     abstract public void print();
     abstract protected String getField(String key);
-    abstract protected void updateField(ProductManager manager, Scanner scanner,String key);
+    abstract protected void updateField(ProductManager manager, String key);
 
-    protected Product(String name, String brand, int stock, double basePrice){
+    protected Product(String name, String brand, int stock, double basePrice, Scanner scanner){
+        this.scanner = scanner;
         counterId++;
         id = counterId;
 
@@ -73,48 +77,64 @@ abstract public class Product {
         baseFieldValuesMap.put(FIELD_STOCK, getStock());
     }
 
-    protected void updateName(ProductManager manager, Scanner scanner) {
-        System.out.println("Ingrese un nuevo nombre: ");
-        String newName = ConsoleUtils.scanName(scanner);
+    protected <T> void updateField(
+            String fieldName,
+            Supplier<T> getter,
+            Function<Scanner, T> reader,
+            Consumer<T> setter,
+            Map<String, Object> mapToUpdate
+    ) {
+        T newValue = reader.apply(scanner);
+        T oldValue = getter.get();
+
+        if (oldValue != null && oldValue != UNASIGNED) {
+            ConsoleUtils.showUpdate(fieldName, oldValue.toString(), newValue.toString());
+        }
+
+        setter.accept(newValue);
+        mapToUpdate.replace(fieldName, StringUtils.normalizeKey(newValue.toString()));
+    }
+
+    protected void updateName(ProductManager manager) {
         String oldName = getName();
 
-        ConsoleUtils.showUpdate(FIELD_NAME, oldName, newName);
+        updateField(
+                FIELD_NAME,
+                this::getName,
+                ConsoleUtils::scanName,
+                this::setName,
+                baseFieldValuesMap
+        );
 
-        setName(newName);
-        baseFieldValuesMap.replace(FIELD_NAME, StringUtils.normalizeKey(newName));
-
-        manager.updateProductsNameMap(StringUtils.normalizeKey(oldName), StringUtils.normalizeKey(newName));
+        manager.updateProductsNameMap(StringUtils.normalizeKey(oldName), StringUtils.normalizeKey(getName()));
     }
 
-    protected void updateBrand (Scanner scanner){
-        System.out.println("Ingrese un nuevo nombre de marca: ");
-        String newName = ConsoleUtils.scanBrand(scanner);
-        String oldName = getBrand();
-
-        ConsoleUtils.showUpdate(FIELD_BRAND, oldName, newName);
-
-        setBrand(newName);
-        baseFieldValuesMap.replace(FIELD_BRAND, StringUtils.normalizeKey(newName));
+    protected void updateBrand (){
+        updateField(
+                FIELD_BRAND,
+                this::getBrand,
+                ConsoleUtils::scanBrand,
+                this::setBrand,
+                baseFieldValuesMap);
     }
 
-    protected void updateBasePrice(Scanner scanner) {
-        System.out.println("Ingrese un nuevo precio base: ");
-        double newPrice = ConsoleUtils.scanBasePrice(scanner);
-
-        ConsoleUtils.showUpdate(FIELD_BASE_PRICE, String.valueOf(getBasePrice()), String.valueOf(newPrice));
-
-        setBasePrice(newPrice);
-        baseFieldValuesMap.replace(FIELD_BASE_PRICE, newPrice);
+    protected void updateBasePrice() {
+        updateField(
+                FIELD_BASE_PRICE,
+                this::getBasePrice,
+                ConsoleUtils::scanBasePrice,
+                this::setBasePrice,
+                baseFieldValuesMap);
     }
 
-    protected void updateStock(Scanner scanner) {
-        System.out.println("Ingrese una nueva cantidad de stock: ");
-        int newStock = ConsoleUtils.scanStock(scanner);
-
-        ConsoleUtils.showUpdate(FIELD_STOCK, String.valueOf(getStock()), String.valueOf(newStock));
-
-        setStock(newStock);
-        baseFieldValuesMap.replace(FIELD_STOCK, newStock);
+    protected void updateStock() {
+        updateField(
+                FIELD_STOCK,
+                this::getStock,
+                ConsoleUtils::scanStock,
+                this::setStock,
+                baseFieldValuesMap
+        );
     }
 
     public void decreaseStock(int amount){
@@ -166,6 +186,39 @@ abstract public class Product {
     }
 
 
+
+    protected Map<String, Object> defineFullValuesMap(String[] specificFields){
+        Map<String, Object> fullFieldValuesMap = getBaseFieldValuesMap();
+
+        for (String field : specificFields) {
+            fullFieldValuesMap.put(field, "No asignado");
+        }
+
+        return fullFieldValuesMap;
+    }
+
+    protected ArrayList<String> defineFullKeys(String[] specificFields){
+        ArrayList<String> fullStringKeyFields = getBaseKeyFields();
+        fullStringKeyFields.addAll(Arrays.asList(specificFields));
+
+        return fullStringKeyFields;
+    }
+
+    protected Map<String,String> defineFullAliasesMap(String[] specificFields, Map<String, Object> fullFieldValuesMap){
+        Map<String,String> fullFieldAliasesMap = getBaseFieldAliasesMap();
+        int index = getNumberOfBaseFields() - 1;
+
+        for (String field : specificFields) {
+            fullFieldAliasesMap.put(field, field);
+            fullFieldAliasesMap.put(String.valueOf(index++), field);
+        }
+
+        return fullFieldAliasesMap;
+    }
+
+
+
+
     public ArrayList<String> getBaseKeyFields(){
         return baseStringKeyFields;
     }
@@ -200,5 +253,10 @@ abstract public class Product {
     String getBrand() {
         return brand;
     }
+
+    public String getBasePriceString(){
+        return String.format("$%.2f", getBasePrice());
+    }
+
 
 }

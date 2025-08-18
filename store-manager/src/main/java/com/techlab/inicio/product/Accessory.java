@@ -10,56 +10,30 @@ import java.util.Scanner;
 //TODO: Resta aplicar lo mismo a los demás productos. Update podría convertirse en una funcion generica tal vez.
 
 public class Accessory extends Product {
-    private final String FIELD_MATERIAL = "material";
-    private final String FIELD_COLOUR = "color";
+    private static final String PRODUCT_TYPE = "Accesorio";
+    private static final String FIELD_MATERIAL = "material";
+    private static final String FIELD_COLOUR = "color";
 
+    private static final String[] specificFields = {FIELD_MATERIAL, FIELD_COLOUR};
     private static Map<String,String> fullFieldAliasesMap;
     private static ArrayList<String> fullStringKeyFields;
     Map<String, Object> fullFieldValuesMap;
 
-    private String material;
-    private String colour;
+    private String material = null;
+    private String colour = null;
 
-    public Accessory(String name,String brand ,int stock, double basePrice){
-        super(name, brand, stock, basePrice);
-        defineFullValuesMap();
-        defineFullKeys();
-        defineFullAliasesMap();
-    }
-
-    private void defineFullKeys(){
-        fullStringKeyFields = getBaseKeyFields();
-        fullStringKeyFields.add(FIELD_MATERIAL);
-        fullStringKeyFields.add(FIELD_COLOUR);
-    }
-
-    private void defineFullValuesMap(){
-        fullFieldValuesMap = getBaseFieldValuesMap();
-
-        fullFieldValuesMap.put(FIELD_MATERIAL, "indefinido");
-        fullFieldValuesMap.put(FIELD_COLOUR, "indefinido");
-    }
-
-    private void defineFullAliasesMap(){
-        fullFieldAliasesMap = getBaseFieldAliasesMap();
-        int index = getNumberOfBaseFields() - 1;
-
-        fullFieldAliasesMap.put(FIELD_MATERIAL, FIELD_MATERIAL);
-        fullFieldAliasesMap.put(String.valueOf(index), FIELD_MATERIAL);
-
-        index++;
-
-        fullFieldAliasesMap.put(FIELD_COLOUR, FIELD_COLOUR);
-        fullFieldAliasesMap.put(String.valueOf(index), FIELD_COLOUR);
+    public Accessory(String name,String brand ,int stock, double basePrice, Scanner scanner){
+        super(name, brand, stock, basePrice, scanner);
+        fullFieldValuesMap = defineFullValuesMap(specificFields);
+        fullStringKeyFields = defineFullKeys(specificFields);
+        fullFieldAliasesMap = defineFullAliasesMap(specificFields, fullFieldValuesMap);
     }
 
     @Override
-    public void setSpecificFields(Scanner scanner) {
-        material = ConsoleUtils.scanMaterial(scanner);
-        colour = ConsoleUtils.scanColour(scanner);
+    public void setSpecificFields() {
+        updateMaterial();
+        updateColour();
 
-        fullFieldValuesMap.replace(FIELD_MATERIAL, StringUtils.normalizeKey(material));
-        fullFieldValuesMap.replace(FIELD_COLOUR, StringUtils.normalizeKey(colour));
         System.out.println("Carga de datos especificos exitosa.");
     }
 
@@ -72,69 +46,65 @@ public class Accessory extends Product {
                 Nombre de Producto: %s
                 Marca: %s
                 Stock disponible: %d
-                Precio base: %.2f
+                Precio base: %s
                 Tipo de producto: %s
                 Material: %s
                 Color: %s
                 ********************************************
-                """, getId() ,getName(), getBrand(), getStock(), this.getBasePrice(), this.getClass().getSimpleName(),
+                """, getId() ,getName(), getBrand(), getStock(), getBasePriceString(), PRODUCT_TYPE,
                 getMaterial(), getColour());
     }
 
     @Override
-    protected void updateField(ProductManager manager,Scanner scanner,String key) {
+    protected void updateField(ProductManager manager,String key) {
         switch (StringUtils.normalizeKey(key)){
             case FIELD_NAME:
-                updateName(manager, scanner);
+                updateName(manager);
                 break;
             case FIELD_BASE_PRICE:
-                updateBasePrice(scanner);
+                updateBasePrice();
                 break;
             case FIELD_STOCK:
-                updateStock(scanner);
+                updateStock();
                 break;
             case FIELD_BRAND:
-                updateBrand(scanner);
+                updateBrand();
                 break;
             case FIELD_MATERIAL:
-                updateMaterial(scanner);
+                updateMaterial();
                 break;
             case FIELD_COLOUR:
-                updateColour(scanner);
-                break;
+                updateColour();
         }
     }
 
-    private void updateMaterial(Scanner scanner) {
-        System.out.println("Ingrese un nuevo material: ");
-        String newMaterial = ConsoleUtils.scanMaterial(scanner);
-        String oldMaterial = getMaterial();
-
-        ConsoleUtils.showUpdate(FIELD_MATERIAL, oldMaterial, newMaterial);
-
-        setMaterial(newMaterial);
-        fullFieldValuesMap.replace(FIELD_MATERIAL, StringUtils.normalizeKey(newMaterial));
+    private void updateMaterial() {
+        updateField(
+                FIELD_MATERIAL,
+                this::getMaterial,
+                ConsoleUtils::scanMaterial,
+                this::setMaterial,
+                fullFieldValuesMap
+        );
     }
 
-    private void updateColour(Scanner scanner) {
-        System.out.println("Ingrese un nuevo color: ");
-        String newColour = ConsoleUtils.scanColour(scanner);
-        String oldColour = getColour();
-
-        ConsoleUtils.showUpdate(FIELD_MATERIAL, oldColour, newColour);
-
-        setColour(newColour);
-        fullFieldValuesMap.replace(FIELD_MATERIAL, StringUtils.normalizeKey(newColour));
+    private void updateColour() {
+        updateField(
+                FIELD_COLOUR,
+                this::getColour,
+                ConsoleUtils::scanColour,
+                this::setColour,
+                fullFieldValuesMap
+        );
     }
 
     private void setMaterial(String newMaterial){
-        this.material = newMaterial;
+        this.material = StringUtils.titleCase(newMaterial);
     }
 
     private void setColour(String newColour){
-        this.colour = newColour;
+        this.colour = StringUtils.titleCase(newColour);
     }
-
 
     @Override
     protected String getField(String key) {
@@ -154,9 +124,13 @@ public class Accessory extends Product {
         return 0;
     }
     public String getMaterial() {
+        if (material == null || material.isEmpty())
+            return UNASIGNED;
         return material;
     }
     public String getColour(){
+        if (colour == null || colour.isEmpty())
+            return UNASIGNED;
         return colour;
     }
 }
