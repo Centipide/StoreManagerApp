@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
 
-//TODO: Resta aplicar lo mismo a los demás productos. Update podría convertirse en una funcion generica tal vez.
-
 public class Accessory extends Product {
     private static final String PRODUCT_TYPE = "Accesorio";
     private static final String FIELD_MATERIAL = "material";
@@ -121,16 +119,16 @@ public class Accessory extends Product {
 
     @Override
     public double getFinalPrice() {
-        return 0;
+        return getBasePrice() * (1 + TaxRates.VAT_GENERAL);
     }
     public String getMaterial() {
         if (material == null || material.isEmpty())
-            return UNASIGNED;
+            return UNSIGNED;
         return material;
     }
     public String getColour(){
         if (colour == null || colour.isEmpty())
-            return UNASIGNED;
+            return UNSIGNED;
         return colour;
     }
 }

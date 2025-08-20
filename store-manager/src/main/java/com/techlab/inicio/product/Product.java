@@ -9,7 +9,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 abstract public class Product {
-    protected static final String UNASIGNED = "No asignado";
+    protected static final String UNSIGNED = "No asignado";
 
     public static final String FIELD_NAME = "nombre";
     public static final String FIELD_BRAND = "marca";
@@ -87,7 +87,7 @@ abstract public class Product {
         T newValue = reader.apply(scanner);
         T oldValue = getter.get();
 
-        if (oldValue != null && oldValue != UNASIGNED) {
+        if (oldValue != null && oldValue != UNSIGNED) {
             ConsoleUtils.showUpdate(fieldName, oldValue.toString(), newValue.toString());
         }
 

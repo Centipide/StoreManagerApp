@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class ProductManager {
+    private static final String EXIT = "salir";
     private static String ACCESORY= "accesorio";
     private static String DRINK = "bebida";
     private static String ELECTRONIC = "electronico";
@@ -60,6 +61,10 @@ public class ProductManager {
     public void addProduct(){
         System.out.println("Ingrese el nuevo Producto. ");
         String name = ConsoleUtils.scanName(scanner);
+        if (productsNameMap.get(name) != null){
+            System.out.println("Ya existe un producto con el mismo nombre");
+            return;
+        }
         String brand = ConsoleUtils.scanBrand(scanner);
         double basePrice = ConsoleUtils.scanBasePrice(scanner);
         int stock = ConsoleUtils.scanStock(scanner);
@@ -117,23 +122,28 @@ public class ProductManager {
             return;
         }
 
-        listProducts();
-        String key = scanProductKey();
-        String name;
-        int id;
+        Product productToDelete = null;
+        String key = null, name = null;
+        int id = -1;
+        do{
+            listProducts();
+            key = scanProductKey();
+            if (!key.equals(EXIT))
+                productToDelete = obtainProduct(key);
 
-        Product productToDelete = obtainProduct(key);
 
-        if (productToDelete != null){
-            name = productToDelete.getName();
-            id = productToDelete.getId();
-            removeProduct(StringUtils.normalizeKey(name),id, productToDelete);
-        } else{
-            System.out.println("Producto no encontrado");
-            return;
-        }
+            if (productToDelete != null){
+                name = productToDelete.getName();
+                id = productToDelete.getId();
+                removeProduct(StringUtils.normalizeKey(name),id, productToDelete);
+            } else{
+                System.out.println("Producto no encontrado");
+            }
 
-        System.out.printf("Producto %s(ID: %d) borrado exitosamente\n", name, id);
+        } while (!key.equals(EXIT) && productToDelete == null);
+
+        if (!key.equals(EXIT))
+            System.out.printf("Producto %s(ID: %d) borrado exitosamente\n", name, id);
     }
 
     private void addProductMap(Product product){
@@ -271,13 +281,5 @@ public class ProductManager {
 
     public ArrayList<Product> getProducts(){
         return products;
-    }
-
-    public Map<String, Product> getProductsNameMap(){
-        return productsNameMap;
-    }
-
-    public Map<Integer, Product> getProductsIdMap(){
-        return productsIdMap;
     }
 }

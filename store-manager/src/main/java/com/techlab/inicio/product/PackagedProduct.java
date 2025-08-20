@@ -132,7 +132,7 @@ public class PackagedProduct extends Product {
 
     @Override
     public double getFinalPrice() {
-        return 0;
+        return getBasePrice() * (1 + TaxRates.VAT_REDUCED);
     }
 
     public void setWeight(double weight){
@@ -153,13 +153,13 @@ public class PackagedProduct extends Product {
     }
     public String getIngredients() {
         if (ingredients == null)
-            return UNASIGNED;
+            return UNSIGNED;
         return ingredients;
     }
 
     public String getWeightString(){
         if (weight == null)
-            return UNASIGNED;
+            return UNSIGNED;
 
         if (weight < 1000)
             return String.format("%.2f g", weight);
@@ -168,7 +168,7 @@ public class PackagedProduct extends Product {
     }
     public String getExpirationDateString() {
         if (expirationDate == null)
-            return UNASIGNED;
+            return UNSIGNED;
 
         return expirationDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }

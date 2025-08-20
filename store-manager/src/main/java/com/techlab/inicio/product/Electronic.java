@@ -129,16 +129,15 @@ public class Electronic extends Product {
 
     @Override
     public double getFinalPrice() {
-        return 0;
+        return getBasePrice() * (1 + TaxRates.VAT_GENERAL) * (1 + TaxRates.INTERNAL_TAX_ELECTRONICS);
     }
 
     public String getModel() {
         if (model == null)
-            return UNASIGNED;
+            return UNSIGNED;
         return model;
     }
 
-    //lo declare como primitiva para que updateFields pueda verificar si es null.
     public Integer getWarrantyMonths() {
         return warrantyMonths;
     }
@@ -158,7 +157,7 @@ public class Electronic extends Product {
 
     public String getPowerConsumptionString(){
         if (powerConsumption == null)
-            return UNASIGNED;
+            return UNSIGNED;
 
         if (powerConsumption < 1000)
             return String.format("%.2f W", powerConsumption);
@@ -167,7 +166,7 @@ public class Electronic extends Product {
     }
     public String getWarrantyMonthsString(){
         if (warrantyMonths == null){
-            return UNASIGNED;
+            return UNSIGNED;
         }
 
         return String.valueOf(warrantyMonths);

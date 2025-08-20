@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class Drink extends Product {
+    private static final String ALCOHOLIC = "alcoholica";
+
     private static final String PRODUCT_TYPE = "Bebida";
     private static final String FIELD_VOLUME = "volumen";
     private static final String FIELD_TYPE = "tipo";
@@ -55,7 +57,7 @@ public class Drink extends Product {
                 Temperatura recomendada: %s
                 ********************************************
                 """, getId() ,getName(), getBrand(), getStock(), getBasePriceString(), PRODUCT_TYPE,
-                getVolumeString(), getType(), getRecTemperature());
+                getVolumeString(), getTypeOfDrink(), getRecTemperature());
     }
 
     @Override
@@ -97,7 +99,7 @@ public class Drink extends Product {
     private void updateType() {
         updateField(
                 FIELD_TYPE,
-                this::getType,
+                this::getTypeOfDrink,
                 ConsoleUtils::scanType,
                 this::setType,
                 fullFieldValuesMap
@@ -130,21 +132,25 @@ public class Drink extends Product {
 
     @Override
     public double getFinalPrice() {
-        return 0;
+        if (getTypeOfDrink().equals(ALCOHOLIC)){
+            return getBasePrice() * (1 + TaxRates.VAT_GENERAL) * (1 + TaxRates.INTERNAL_TAX_BEVERAGES);
+        }
+
+        return getBasePrice() * (1 + TaxRates.VAT_REDUCED);
     }
 
     private String getRecTemperature() {
         if (recommendedTemperature == null)
-            return UNASIGNED;
+            return UNSIGNED;
         return recommendedTemperature;
     }
 
     public Double getVolume() {
         return volume;
     }
-    public String getType() {
+    public String getTypeOfDrink() {
         if (type == null)
-            return UNASIGNED;
+            return UNSIGNED;
         return type;
     }
     public void setVolume(double volume) {
@@ -159,7 +165,7 @@ public class Drink extends Product {
 
     public String getVolumeString(){
         if (volume == null)
-            return UNASIGNED;
+            return UNSIGNED;
         return String.format("%.2f L", getVolume());
     }
 }
